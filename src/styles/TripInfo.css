@@ -1,0 +1,18 @@
+.arrow-animation {
+  margin: 0 12px;
+  font-size: 24px;
+  animation: moveRight 1s infinite alternate ease-in-out;
+}
+
+.location-text {
+  font-size: 18px;
+}
+
+@keyframes moveRight {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: translateX(4px);
+  }
+}

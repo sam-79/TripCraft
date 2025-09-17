@@ -1,0 +1,51 @@
+.ant-layout {
+  background-color: #d4d4d4 !important; 
+}
+
+.ant-layout-content {
+   background: #d4d4d4;
+}
+
+/* Sidebar backgrounds */
+[data-theme="light"] .ant-layout-sider {
+  background: linear-gradient(180deg, #ff6b81 0%, #ffcc70 100%);
+}
+
+[data-theme="dark"] .ant-layout-sider {
+  background: linear-gradient(180deg, #0f2027 0%, #2c5364 100%);
+}
+
+.sidebar-menu {
+  background: transparent;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.sidebar-menu .ant-menu-item {
+  /* padding: 12px 20px !important; */
+  height: 56px !important;
+  line-height: 56px !important;
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+}
+
+/* Selected menu item */
+[data-theme="light"] .ant-menu-dark .ant-menu-item-selected {
+  background: linear-gradient(90deg, #5a393e 0%, #ff6b81 100%) !important;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .ant-menu-dark .ant-menu-item-selected {
+  background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%) !important;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* Hover effect */
+.ant-menu-dark .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px;
+  transform: scale(1.03);
+  transition: all 0.2s ease;
+}
