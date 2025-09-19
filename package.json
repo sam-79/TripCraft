@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/comfortaa": "^5.2.8",
     "@fontsource/poppins": "^5.2.6",
     "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^2.9.0",
+    "@vis.gl/react-google-maps": "^1.5.5",
     "antd": "^5.27.3",
     "framer-motion": "^12.23.12",
     "i18next": "^25.5.2",

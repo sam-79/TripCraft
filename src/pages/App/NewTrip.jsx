@@ -17,16 +17,20 @@ const NewTrip = () => {
   const { data: preferences, isLoading: isLoadingPreferences, isSuccess, error: preferencesError, } = useGetUserPreferencesQuery();
 
   // 2. Get the mutation hook for adding a new trip
-  const [addTrip, { isLoading: isAddingTrip }] = useAddTripMutation();
+  const [addTrip, { data: newTripData, isLoading: isAddingTrip }] = useAddTripMutation();
 
 
   const handleFormSubmit = async (formData) => {
     try {
-      addTrip(formData); // Fire and forget, don't await
-      messageApi.loading("Creating your trip...", 2); // Show loading for 2 seconds
-      setTimeout(() => {
-        navigate("/user/trips");
-      }, 5000);
+      const response = await addTrip(formData).unwrap(); // Fire and forget, don't await
+      const tripId = response?.data.trip_id;
+
+      console.log(`New Trip response: ${response}`)
+      console.log(`New Trip newTripData: ${newTripData}`)
+
+      messageApi.info(`Trip creating added to queue ${tripId}`); // Show loading for 2 seconds
+      navigate(`/user/trips/${tripId}`);
+
     } catch (err) {
       messageApi.error(err.data?.message || "Failed to create trip. Please try again.");
       console.error('Failed to create trip:', err);

@@ -2,15 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { Card, Typography, Spin, Alert, Button, Row, Col, Segmented, List, Avatar, Popconfirm, message, Tooltip } from 'antd';
 import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useGetTripByIdQuery, useDeleteTripPlaceMutation, useGenerateItineraryMutation, useGenerateTravelModeMutation } from '../../api/tripApi';
 import { motion } from 'framer-motion';
 
+import { useGetTripByIdQuery, useDeleteTripPlaceMutation, useGenerateItineraryMutation, useGenerateTravelModeMutation } from '../../api/tripApi';
+import { useGetBookingSuggestionsQuery } from '../../api/bookingApi';
+
 // Import the child components
-import TripMapView from '../../components/TripDetails/TripMapView';
+// import TripMapView from '../../components/TripDetails/TripMapView';
+import TripGoogleMapView from '../../components/TripDetails/TripGoogleMapView';
 import TripItineraryView from '../../components/TripDetails/TripItineraryView';
 import TripInfoDisplay from '../../components/TripDetails/TripInfoDisplay';
 import TripTravelOptions from '../../components/TripDetails/TripTravelOptions';
 import LoadingAnimationOverlay from '../../components/LoadingAnimation';
+import TripBookingView from '../../components/TripDetails/TripBookingView';
+
+
 
 const { Title, Text } = Typography;
 
@@ -22,13 +28,21 @@ const TripsDetails = () => {
     const [messageApi, messageApiContextHolder] = message.useMessage();
 
     // Use RTK Query's polling feature to get live updates from the backend
+    // const { data: trip, error: tripError, isLoading: isLoadingTrip } = useGetTripByIdQuery(tripId, {
+    //     pollingInterval: 5000,
+    //     refetchOnMountOrArgChange: true,
+    // });
     const { data: trip, error, isLoading } = useGetTripByIdQuery(tripId);
 
+    // Booking suggestions query - only runs when we have a tripId
+    const { data: bookingData, error: bookingError, isLoading: isLoadingBooking } = useGetBookingSuggestionsQuery(tripId, {
+        skip: !tripId,
+    });
 
     const [deleteTripPlace, { isLoading: isDeletingPlace }] = useDeleteTripPlaceMutation();
     const [generateItinerary, { isLoading: isGeneratingItinerary }] = useGenerateItineraryMutation();
     const [generatetravelMode, { isLoading: isTravelModeLoading }] = useGenerateTravelModeMutation();
-    
+
 
     // When the itinerary is ready, automatically switch to that view
     useEffect(() => {
@@ -78,6 +92,7 @@ const TripsDetails = () => {
             const placesReady = trip.tourist_places_status;
             const travelOptsReady = trip.travel_options_status;
             const itineraryReady = trip.itineraries_status;
+            const bookingReady = !!bookingData; // Check if booking data is available
 
             return (
                 <Row gutter={16} style={{ height: 'calc(100vh - 220px)' }}>
@@ -106,7 +121,14 @@ const TripsDetails = () => {
                                             Itinerary
                                         </Tooltip>
                                     ), value: 'itinerary', disabled: !itineraryReady
-                                }
+                                },
+                                {
+                                    label: (
+                                        <Tooltip title={bookingReady ? null : 'Crafting your Bookings'}>
+                                            Booking
+                                        </Tooltip>
+                                    ), value: 'booking', disabled: !bookingReady
+                                },
                             ]}
                             value={activeView}
                             onChange={(value) => {
@@ -177,12 +199,18 @@ const TripsDetails = () => {
                                     </div>
                                     : <TripItineraryView itinerary={trip.itineraries} onPlaceClick={setHighlightedPlaceId} />
                             )}
+                            {activeView === 'booking' && (
+                                isLoadingBooking
+                                    ? <div style={{ textAlign: 'center', padding: '50px' }}><Spin tip="Fetching booking options..." /></div>
+                                    : bookingError
+                                        ? <Alert message="Could not fetch booking options." type="error" />
+                                        : <TripBookingView bookingData={bookingData} />
+                            )}  
                         </div>
                     </Col>
                     <Col xs={24} md={10} style={{ height: '100%' }}>
-                        <TripMapView
+                        <TripGoogleMapView
                             locations={placesReady ? trip.tourist_places_list : []}
-                            route={itineraryReady && activeView === 'itinerary' ? trip.itineraries : []}
                             highlightedPlaceId={highlightedPlaceId}
                         />
                     </Col>

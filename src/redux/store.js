@@ -13,6 +13,7 @@ import { tripApi } from '../api/tripApi'
 import { authApi } from '../api/authApi';
 import { recommendationApi } from '../api/recommendationApi';
 import { enumsApi } from '../api/enumsApi';
+import { bookingApi } from '../api/bookingApi';
 // 1. Configure persistence (only for auth data)
 const persistConfig = {
     key: 'root',
@@ -29,7 +30,8 @@ const rootReducer = combineReducers({
     [tripApi.reducerPath]: tripApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
     [recommendationApi.reducerPath]: recommendationApi.reducer,
-    [enumsApi.reducerPath]: enumsApi.reducer
+    [enumsApi.reducerPath]: enumsApi.reducer,
+    [bookingApi.reducerPath]:bookingApi.reducer
 });
 
 // 3. Wrap rootReducer with persistence
@@ -41,7 +43,7 @@ export const store = configureStore({
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
             serializableCheck: false,
-        }).concat(userApi.middleware, tripApi.middleware, authApi.middleware, recommendationApi.middleware, enumsApi.middleware),
+        }).concat(userApi.middleware, tripApi.middleware, authApi.middleware, recommendationApi.middleware, enumsApi.middleware, bookingApi.middleware),
 });
 
 // 5. Create and export the persistor

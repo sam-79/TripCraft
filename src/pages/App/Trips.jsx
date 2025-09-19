@@ -59,7 +59,7 @@ const Trips = () => {
     }
     return <Tag icon={<PlayCircleOutlined />} color="warning">Ongoing</Tag>;
   };
-  
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* HEADER */}
@@ -94,11 +94,11 @@ const Trips = () => {
                     style={{ borderRadius: 16, overflow: "hidden" }}
                     cover={
                       <div style={{ position: "relative", height: 180 }}>
-                        <img
-                          src={`https://placehold.co/600x400/a1c4fd/ffffff?text=${trip.destination}`}
-                          alt={trip.trip_name}
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        />
+                        <div style={{ position: "relative", height: 180, background: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <div style={{ textAlign: "center" }}>
+                            <Title level={4} style={{ margin: 0, color: "#234", textShadow: '0 1px 3px #fff' }}>{trip.trip_name}</Title>
+                          </div>
+                        </div>
                         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)" }} />
                         <div style={{ position: "absolute", bottom: 12, left: 16, color: "#fff" }}>
                           <Title level={5} style={{ margin: 0, color: "#fff", textShadow: '0 1px 3px #000' }}>{trip.trip_name}</Title>
@@ -108,7 +108,7 @@ const Trips = () => {
                     }
                     actions={[<Button type="link" key="details" onClick={() => navigate(`/user/trips/${trip.trip_id}`)}>View Details <ArrowRightOutlined /></Button>]}
                   >
-                    <Space direction="vertical" style={{width: '100%'}}>
+                    <Space direction="vertical" style={{ width: '100%' }}>
                       {getStatusTag(trip.start_date, trip.end_date)}
                       <Space wrap>
                         <Tag icon={<CalendarOutlined />}>{formatDate(trip.start_date)} → {formatDate(trip.end_date)}</Tag>

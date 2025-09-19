@@ -10,13 +10,88 @@ export const APP_TITLE_SHORT = "AI";
 export const APP_LOGO_URL = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%237B66FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-compass"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`;
 
 
+
+export const all_enums = {
+  native_languages: [
+    "English",
+    "Hindi",
+    "Tamil",
+    "Telugu",
+    "Bengali",
+    "Marathi",
+    "Gujarati",
+    "Malayalam",
+    "Kannada",
+    "Punjabi",
+    "Other"
+  ],
+  activities: [
+    "Adventure",
+    "Heritage",
+    "Nightlife",
+    "Relaxation",
+    "Nature",
+    "Culture"
+  ],
+  travelling_with: [
+    "Solo",
+    "Partner",
+    "Friends",
+    "Family"
+  ],
+  travel_modes: [
+    "Bike",
+    "Car",
+    "Flight",
+    "Train",
+    "Train&Road",
+    "Flight&Road",
+    "Custom"
+  ],
+  property_types: [
+    "Hotel",
+    "Homestay",
+    "Villa",
+    "Cottage",
+    "Apartment",
+    "Resort",
+    "Hostel",
+    "Camp",
+    "Guest House",
+    "Tree House",
+    "Palace",
+    "Farm House",
+    "Airbnb"
+  ],
+  food_preferences: [
+    "Veg",
+    "Non-Veg",
+    "Vegan",
+    "Anything"
+  ],
+  train_classes: [
+    "SL",
+    "3A",
+    "3E",
+    "2A",
+    "1A"
+  ],
+  departure_times: [
+    "Morning",
+    "Afternoon",
+    "Evening",
+    "Night"
+  ]
+};
+
+
 export const activityOptions = [
-    "CULTURE",
-    "ADVENTURE",
-    "NATURE",
-    "HISTORICAL",
-    "FOOD",
-    "RELAXATION",
+  "CULTURE",
+  "ADVENTURE",
+  "NATURE",
+  "HISTORICAL",
+  "FOOD",
+  "RELAXATION",
 ];
 
 export const bestTimeOptions = ["Morning", "Afternoon", "Evening", "Night", "All Day"];

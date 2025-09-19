@@ -1,6 +1,6 @@
 import React, { useState, useContext, useMemo, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
-import { Layout, Menu, Button, Switch, Typography, Select, Modal } from "antd";
+import { Layout, Menu, Button, Switch, Typography, Select, Modal, message } from "antd";
 import {
   DashboardOutlined,
   PlusCircleOutlined,
@@ -21,7 +21,8 @@ import { logout } from "../../redux/features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import "../../styles/MainLayout.css";
 import { useTranslation } from "react-i18next";
-import { selectLanguage, setLanguage } from "../../redux/features/langSlice";
+import LoadingAnimationOverlay from "../../components/LoadingAnimation";
+import LanguageSelector from "../../components/LanguageSelector";
 
 
 const { Header, Content, Sider } = Layout;
@@ -30,6 +31,7 @@ const { Title } = Typography;
 const { Option } = Select;
 
 const MainLayout = () => {
+
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,30 +39,7 @@ const MainLayout = () => {
   const dispatch = useDispatch();
   const [logoutModal, logoutContext] = Modal.useModal();
 
-  const { t, i18n } = useTranslation();
-  const currentLanguage = useSelector(selectLanguage);
-
-  useEffect(() => {
-    i18n.changeLanguage(currentLanguage);
-  }, [currentLanguage, i18n])
-
-  const handleLanguageChange = (value) => {
-    dispatch(setLanguage(value));
-  };
-
-
-  const languages = [
-    { code: "en", label: "English" },
-    { code: "hi", label: "Hindi" },
-    { code: "ta", label: "Tamil" },
-    { code: "te", label: "Telugu" },
-    { code: "bn", label: "Bengali" },
-    { code: "mr", label: "Marathi" },
-    { code: "gu", label: "Gujarati" },
-    { code: "ml", label: "Malayalam" },
-    { code: "kn", label: "Kannada" },
-    { code: "pa", label: "Punjabi" },
-  ];
+  const { t } = useTranslation();
 
   const menuItems = useMemo(
     () => [
@@ -113,6 +92,7 @@ const MainLayout = () => {
     }, "");
   }, [location.pathname, menuItems]);
 
+
   const showLogoutConfirm = async () => {
     await logoutModal.confirm({
       title: 'Log Out',
@@ -125,12 +105,13 @@ const MainLayout = () => {
     })
   }
 
+
   return (
     <Layout
       data-theme={theme}
       style={{ minHeight: "100vh", fontFamily: "Poppins, sans-serif" }}
     >
-      <logoutContext/>
+      {logoutContext}
       <Sider
         trigger={null}
         collapsible
@@ -187,10 +168,10 @@ const MainLayout = () => {
             key="logout"
             icon={<LogoutOutlined style={{ fontSize: "20px" }} />}
             onClick={showLogoutConfirm}
-            // style={{
-            //   color: theme === "light" ? "#ffffff" : "#ffffff",
-            //   fontWeight: "500",
-            // }}
+          // style={{
+          //   color: theme === "light" ? "#ffffff" : "#ffffff",
+          //   fontWeight: "500",
+          // }}
           >
             {t("logout")}
           </Menu.Item>
@@ -226,18 +207,19 @@ const MainLayout = () => {
 
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {/* <GlobalOutlined style={{ fontSize: 18 }} /> */}
-            <Select
+            {/* <Select
               defaultValue={currentLanguage}
               style={{ width: 140 }}
               bordered={false}
               onChange={handleLanguageChange}
             >
               {languages.map((lang) => (
-                <Option key={lang.code} value={lang.code}>
-                  {lang.label}
+                <Option key={lang} value={lang}>
+                  {lang}
                 </Option>
               ))}
-            </Select>
+            </Select> */}
+            <LanguageSelector />
 
             <Switch
               checkedChildren={<SunOutlined />}

@@ -1,0 +1,74 @@
+.preferences-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.preferences-header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.preferences-collapse {
+    background: var(--ant-color-bg-container);
+    border-radius: 16px !important;
+    border: 1px solid var(--ant-color-border-secondary);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.preferences-collapse .ant-collapse-item {
+    border-bottom: 1px solid var(--ant-color-border-secondary) !important;
+}
+
+.preferences-collapse .ant-collapse-item:last-child {
+    border-bottom: none !important;
+}
+
+.preferences-collapse .ant-collapse-header {
+    padding: 20px 24px !important;
+    align-items: center !important;
+}
+.preferences-collapse .ant-collapse-header .ant-typography {
+    margin-bottom: 0;
+    color: var(--ant-color-text);
+}
+
+.preferences-collapse .ant-collapse-content-box {
+    padding: 0 24px 24px 24px !important;
+}
+
+/* Style form items for better spacing */
+.ant-form-item-label > label {
+    font-weight: 500;
+}
+
+/* --- Save Button --- */
+.save-button {
+    width: 100%;
+    max-width: 300px;
+    margin: 16px auto 0;
+    display: block;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* Make Checkbox group more visually appealing */
+.ant-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ant-checkbox-wrapper {
+    background: var(--ant-color-bg-layout);
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.ant-checkbox-wrapper:hover {
+    background: var(--ant-color-bg-container-hover);
+    transform: translateY(-2px);
+}

@@ -6,21 +6,18 @@ import { debounce } from 'lodash';
 import { fetchPlaceSuggestions } from '../../utils/utils';
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
-
-
-const propertyTypeOptions = ["Hotel", "Homestay", "Villa", "Cottage", "Apartment", "Resort", "Hostel", "Camp", "Guest House", "Tree House", "Palace", "Farm House", "Airbnb"];
-const foodPreferenceOptions = ["Veg", "Non-Veg", "Vegan", "Anything"];
-const travelModeOptions = ["Train", "Flight", "Car", "Bike", "Train&Road", "Flight&Road", "Custom"];
-const activityOptions = ["Adventure", "Heritage", "Nightlife", "Relaxation", "Nature", "Culture"];
-const travellingWithOptions = ["Friends", "Family", "Solo", "Partner"];
+import { useGetEnumsQuery } from "../../api/enumsApi";
+import { all_enums } from '../../constants/contants';
+import LoadingAnimationOverlay from '../LoadingAnimation';
 
 
 const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip } }) => {
     const [form] = Form.useForm();
     const [destinationOptions, setDestinationOptions] = useState([]);
     const [baseLocationOptions, setBaseLocationOptions] = useState([]);
-
     const debouncedSearch = useCallback(debounce(fetchPlaceSuggestions, 300), []);
+
+    const { data: enums, isLoading, isError } = useGetEnumsQuery();
 
     useEffect(() => {
         if (defaultPreferences) {
@@ -51,7 +48,7 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
             budget: values.budget,
             num_people: values.num_people,
             travel_mode: values.travel_mode,
-            activities: values.activity,
+            activities: values.activities,
             travelling_with: values.travelling_with,
             property_type: values.property_type,
             hotel_room_price_per_night: values.hotel_room_price_per_night,
@@ -59,6 +56,16 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
         };
         onSubmit(payload);
     };
+
+    if (isLoading) {
+        return <LoadingAnimationOverlay text={"Loading Form"} />
+    }
+
+    const propertyTypeOptions = enums?.data.property_types || [];
+    const foodPreferenceOptions = enums?.data.food_preferences || all_enums.food_preferences;
+    const travelModeOptions = enums?.data.travel_mode || all_enums.travel_modes;
+    const activityOptions = enums?.data.activities || all_enums.activities;
+    const travellingWithOptions = enums?.data.travelling_with || all_enums.travelling_with;
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ padding: '24px' }}>
@@ -68,13 +75,13 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
                 </Form.Item>
                 <Row gutter={16}>
                     <Col span={12}>
-                        <Form.Item name="destination" label="Destination *" rules={[{ required: true }]}>
-                            <AutoComplete options={destinationOptions} onSearch={(text) => debouncedSearch(text, setDestinationOptions)} placeholder="e.g., Rishikesh" />
+                        <Form.Item name="base_location" label="Starting From *" rules={[{ required: true }]}>
+                            <AutoComplete options={baseLocationOptions} onSearch={(text) => debouncedSearch(text, setBaseLocationOptions)} placeholder="e.g., Nagpur" />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item name="base_location" label="Starting From *" rules={[{ required: true }]}>
-                            <AutoComplete options={baseLocationOptions} onSearch={(text) => debouncedSearch(text, setBaseLocationOptions)} placeholder="e.g., Nagpur" />
+                        <Form.Item name="destination" label="Destination *" rules={[{ required: true }]}>
+                            <AutoComplete options={destinationOptions} onSearch={(text) => debouncedSearch(text, setDestinationOptions)} placeholder="e.g., Rishikesh" />
                         </Form.Item>
                     </Col>
                 </Row>

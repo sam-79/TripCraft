@@ -34,7 +34,7 @@ export const tripApi = createApi({
                 body: newTripData,
             }),
             invalidatesTags: [{ type: 'Trip', id: 'LIST' }],
-            transformResponse: (response) => response.data,
+            // transformResponse: (response) => response.data,
         }),
         updateTrip: builder.mutation({
             query: ({ tripId, ...updatedData }) => ({

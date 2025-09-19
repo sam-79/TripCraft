@@ -1,51 +1,85 @@
+
+/* --- Custom Scrollbar for a Modern Look --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.4);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.6);
+}
+
+/* --- General Layout & Content Area --- */
 .ant-layout {
-  background-color: #d4d4d4 !important; 
+  /* Let the theme control the background color */
+  transition: background-color 0.3s ease;
 }
 
 .ant-layout-content {
-   background: #d4d4d4;
+  padding: 24px;
+  overflow-y: auto;
+  height: calc(100vh - 64px); /* Assuming header height is 64px */
 }
 
-/* Sidebar backgrounds */
-[data-theme="light"] .ant-layout-sider {
-  background: linear-gradient(180deg, #ff6b81 0%, #ffcc70 100%);
+/* --- Sidebar Styling --- */
+.ant-layout-sider {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease;
 }
 
-[data-theme="dark"] .ant-layout-sider {
-  background: linear-gradient(180deg, #0f2027 0%, #2c5364 100%);
-}
-
-.sidebar-menu {
+.sidebar-menu.ant-menu {
   background: transparent;
-  font-weight: 600;
-  font-size: 16px;
+  border-right: 0;
+  padding: 16px 8px; /* Add some padding around the menu */
 }
 
+/* --- Menu Item Styling --- */
 .sidebar-menu .ant-menu-item {
-  /* padding: 12px 20px !important; */
-  height: 56px !important;
-  line-height: 56px !important;
-  margin-top: 6px !important;
-  margin-bottom: 6px !important;
+  height: 52px !important;
+  line-height: 52px !important;
+  padding-left: 24px !important;
+  margin-bottom: 8px !important;
+  border-radius: 12px !important; /* Slightly smaller radius than the container */
+  font-weight: 500;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Selected menu item */
-[data-theme="light"] .ant-menu-dark .ant-menu-item-selected {
-  background: linear-gradient(90deg, #5a393e 0%, #ff6b81 100%) !important;
-  border-radius: 8px;
+.sidebar-menu .ant-menu-item .ant-menu-item-icon {
+    font-size: 18px; /* Slightly larger icons */
+}
+
+/* --- Menu Item Hover Effect --- */
+.sidebar-menu .ant-menu-item:not(.ant-menu-item-selected):hover {
+  /* Let the theme's itemHoverBg handle the color */
+  transform: translateX(4px) scale(1.02);
+  color: #FFFFFF;
+}
+
+/* --- Selected Menu Item Enhancements --- */
+
+/* Light Theme Selected Item: Subtle inner glow */
+[data-theme="light"] .ant-menu-item-selected {
   font-weight: 700;
+  /* box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3); */
+  border
 }
 
-[data-theme="dark"] .ant-menu-dark .ant-menu-item-selected {
-  background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%) !important;
-  border-radius: 8px;
+/* Dark Theme Selected Item: "Electric Neon" glow effect */
+[data-theme="dark"] .ant-menu-item-selected {
   font-weight: 700;
-}
-
-/* Hover effect */
-.ant-menu-dark .ant-menu-item:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-radius: 8px;
-  transform: scale(1.03);
-  transition: all 0.2s ease;
+  color: #FFFFFF !important;
+  /* This glowing shadow matches the electric teal primary color */
+  /* box-shadow: 0 0 15px rgba(0, 245, 212, 0.3), 0 0 25px rgba(0, 178, 255, 0.2); */
 }

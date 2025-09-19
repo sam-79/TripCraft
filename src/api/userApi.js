@@ -14,8 +14,7 @@ export const userApi = createApi({
         },
     }),
 
-    // Define tag types for caching and invalidation
-    tagTypes: ['User', 'Preferences'],
+    tagTypes: ['User', 'Preferences', 'Settings'],
 
     endpoints: (builder) => ({
         // 1. Get User Info
@@ -43,20 +42,20 @@ export const userApi = createApi({
         }),
 
         // 4. Get User Language
-        getUserLanguage: builder.query({
+        getUserSettings: builder.query({
             query: () => '/settings/get',
-            providesTags: ['Language'],
+            providesTags: ['Settings'],
             transformResponse: (response) => response.data,
         }),
 
         // 3. Update User Preferences
-        updateUserLanguage: builder.mutation({
-            query: (language) => ({
+        updateUserSettings: builder.mutation({
+            query: (settings) => ({
                 url: '/settings/update',
                 method: 'PUT',
-                body: language,
+                body: settings,
             }),
-            invalidatesTags: ['Language'],
+            invalidatesTags: ['Settings'],
         }),
         
     }),
@@ -67,7 +66,7 @@ export const {
     useGetUserInfoQuery,
     useGetUserPreferencesQuery,
     useUpdateUserPreferencesMutation,
-    useGetUserLanguageQuery,
-    useUpdateUserLanguageMutation,
+    useGetUserSettingsQuery,
+    useUpdateUserSettingsMutation,
 } = userApi;
 

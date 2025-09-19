@@ -1,0 +1,121 @@
+/* --- Main Container & Header --- */
+.trip-booking-container {
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+.booking-header {
+    margin-bottom: 24px;
+}
+
+.booking-leg {
+    margin-bottom: 32px;
+}
+
+.leg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+}
+
+/* --- Train Card Styling --- */
+.train-card {
+    background: var(--ant-color-bg-container-hover);
+    border-radius: 16px !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.train-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.train-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.train-divider {
+    margin: 12px 0 !important;
+}
+
+.train-route {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.station-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+}
+.station-info.end {
+    align-items: flex-end;
+    text-align: right;
+}
+.station-info .ant-typography-strong {
+    font-size: 1.2rem;
+}
+
+.route-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    color: var(--ant-color-text-tertiary);
+}
+.route-line .anticon {
+    font-size: 1.5rem;
+    color: var(--ant-color-primary);
+}
+
+/* --- Class Availability Section --- */
+.class-collapse .ant-collapse-header {
+    padding-left: 0 !important;
+    color: var(--ant-color-primary) !important;
+}
+.class-collapse .ant-collapse-content-box {
+    padding: 0 !important;
+    padding-top: 12px !important;
+}
+
+.class-availability-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.class-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--ant-color-bg-layout);
+}
+
+.class-name {
+    font-weight: 500;
+}
+.class-details {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.class-fare {
+    color: var(--ant-color-text-secondary);
+}
+.class-fare .anticon {
+    margin-right: 4px;
+}

@@ -6,8 +6,8 @@ import { RouterProvider } from "react-router";
 import { store, persistor } from './redux/store';
 import router from './routes/routes'
 import { ThemeProvider } from './theme/ThemeProvider';
-import "@fontsource/poppins/400.css";
-import "@fontsource/poppins/700.css";
+import "@fontsource/comfortaa/400.css";
+import "@fontsource/comfortaa/700.css";
 import "./i18n";
 import LoadingAnimationOverlay from './components/LoadingAnimation';
 
