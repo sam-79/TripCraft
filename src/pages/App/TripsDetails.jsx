@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { Card, Typography, Spin, Alert, Button, Row, Col, Segmented, List, Avatar, Popconfirm, message, Tooltip } from 'antd';
 import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 import { useGetTripByIdQuery, useDeleteTripPlaceMutation, useGenerateItineraryMutation, useGenerateTravelModeMutation } from '../../api/tripApi';
 import { useGetBookingSuggestionsQuery } from '../../api/bookingApi';
@@ -23,16 +24,27 @@ const { Title, Text } = Typography;
 const TripsDetails = () => {
     const { tripId } = useParams();
     const navigate = useNavigate();
+    const [messageApi, messageApiContextHolder] = message.useMessage();
+    const { t } = useTranslation();
+
+    // State for the currently selected view (map, itinerary, etc.)
     const [activeView, setActiveView] = useState('info');
     const [highlightedPlaceId, setHighlightedPlaceId] = useState(null);
-    const [messageApi, messageApiContextHolder] = message.useMessage();
 
-    // Use RTK Query's polling feature to get live updates from the backend
-    // const { data: trip, error: tripError, isLoading: isLoadingTrip } = useGetTripByIdQuery(tripId, {
-    //     pollingInterval: 5000,
-    //     refetchOnMountOrArgChange: true,
-    // });
-    const { data: trip, error, isLoading } = useGetTripByIdQuery(tripId);
+    // Fetch trip data
+    const { data: trip, error: tripError, isLoading } = useGetTripByIdQuery(tripId, {
+        // Polling to check the status of itinerary generation
+        pollingInterval: (tripData) => {
+            // Only poll if the trip is being processed
+            return tripData?.itineraries_status && tripData.itineraries_status !== 'completed'
+                ? 5000 // Poll every 5 seconds if it's still processing
+                : 0;   // Stop polling once completed or if there's nothing to poll
+        },
+    });
+
+    // Determine if the itinerary is ready
+    const itineraryReady = trip?.itineraries_status === 'completed';
+    const travelOptsReady = trip?.travel_options_status === 'completed';
 
     // Booking suggestions query - only runs when we have a tripId
     const { data: bookingData, error: bookingError, isLoading: isLoadingBooking } = useGetBookingSuggestionsQuery(tripId, {
@@ -58,9 +70,9 @@ const TripsDetails = () => {
     const handleDeletePlace = async (placeId) => {
         try {
             await deleteTripPlace(placeId).unwrap();
-            messageApi.success('Place removed from trip!');
+            messageApi.success(t('place_removed'));
         } catch (err) {
-            messageApi.error('Failed to remove place.');
+            messageApi.error(t('place_removal_error'));
         }
     };
 
@@ -68,10 +80,10 @@ const TripsDetails = () => {
         try {
             generateItinerary(tripId).unwrap();
             generatetravelMode(tripId).unwrap();
-            messageApi.loading({ content: 'Generating your itinerary...', key: 'itinerary' });
+            messageApi.loading({ content: t('generating_itinerary'), key: 'itinerary' });
             // Polling will automatically handle showing the result
         } catch (err) {
-            messageApi.error({ content: 'Failed to start itinerary generation.', key: 'itinerary' });
+            messageApi.error({ content: t('itinerary_generation_failed'), key: 'itinerary' });
         }
     };
 
@@ -79,114 +91,99 @@ const TripsDetails = () => {
     const renderContent = () => {
         if (isLoading && !trip) {
             return <div style={{ textAlign: 'center', padding: '50px' }}>
-                {/* <Spin size="large" tip="Loading trip details..." /> */}
-                <LoadingAnimationOverlay text={"Loading trip details"} />
+                <LoadingAnimationOverlay text={t('loading_trip_details')} />
             </div>;
         }
 
-        if (error) {
-            return <Alert message="Error" description="Could not fetch trip details." type="error" showIcon />;
+        if (tripError) {
+            return <Alert message={t('error')} description={t('trip_load_error')} type="error" />;
         }
 
         if (trip) {
-            const placesReady = trip.tourist_places_status;
-            const travelOptsReady = trip.travel_options_status;
-            const itineraryReady = trip.itineraries_status;
-            const bookingReady = !!bookingData; // Check if booking data is available
-
             return (
-                <Row gutter={16} style={{ height: 'calc(100vh - 220px)' }}>
-                    <Col xs={24} md={14} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <Segmented
-                            block
-                            options={[
-                                { label: 'Trip Info', value: 'info' },
+                <Row gutter={[16, 16]} style={{ height: '100%' }}>
+                    {/* Left Column - Content */}
+                    <Col span={14} style={{ height: '100%' }}>
+                        <Card
+                            style={{ borderRadius: 12, height: '100%' }}
+                            tabList={[
                                 {
-                                    label: (
-                                        <Tooltip title={placesReady ? null : 'Finding places for you'}>
-                                            Locations
-                                        </Tooltip>
-                                    ), value: 'locations', disabled: !placesReady
+                                    key: 'info',
+                                    tab: t('details'),
                                 },
                                 {
-                                    label: (
-                                        <Tooltip title={travelOptsReady ? null : 'Finding best options for you'}>
-                                            Travel Options
-                                        </Tooltip>
-                                    ), value: 'travel', disabled: !travelOptsReady
+                                    key: 'places',
+                                    tab: t('places'),
+                                    disabled: !trip.places || trip.places.length === 0
                                 },
                                 {
-                                    label: (
-                                        <Tooltip title={itineraryReady ? null : 'Crafting your trip'}>
-                                            Itinerary
-                                        </Tooltip>
-                                    ), value: 'itinerary', disabled: !itineraryReady
+                                    key: 'itinerary',
+                                    tab: t('itinerary'),
+                                    disabled: !itineraryReady
                                 },
                                 {
-                                    label: (
-                                        <Tooltip title={bookingReady ? null : 'Crafting your Bookings'}>
-                                            Booking
-                                        </Tooltip>
-                                    ), value: 'booking', disabled: !bookingReady
+                                    key: 'travel',
+                                    tab: t('travel_options'),
+                                    disabled: !travelOptsReady
+                                },
+                                {
+                                    key: 'booking',
+                                    tab: t('booking'),
+                                    disabled: !bookingData
                                 },
                             ]}
-                            value={activeView}
-                            onChange={(value) => {
-                                setHighlightedPlaceId(null);
-                                setActiveView(value);
-                            }}
-                        />
-                        <div style={{ flex: 1, marginTop: 16, overflowY: 'auto', paddingRight: '8px' }}>
-                            {activeView === 'info' && <TripInfoDisplay trip={trip} />}
+                            activeTabKey={activeView}
+                            onTabChange={setActiveView}
+                            bodyStyle={{ height: 'calc(100% - 57px)', overflowY: 'auto' }} // 57px is the height of the tab header
+                        >
+                            {activeView === 'info' && (
+                                <TripInfoDisplay trip={trip} />
+                            )}
 
-                            {activeView === 'locations' && (
-                                !placesReady
-                                    ? <div style={{ textAlign: 'center', padding: '50px' }}>
-                                        {/* <Spin tip={trip.tourist_places_status_message || "Finding best spots..."} /> */}
-                                        <LoadingAnimationOverlay text={trip.tourist_places_status_message || "Finding best spots..."} />
-                                    </div>
-                                    : <>
-                                        <List
-                                            dataSource={trip.tourist_places_list}
-                                            renderItem={(item) => (
-                                                <List.Item
-                                                    actions={[
-                                                        <Popconfirm
-                                                            title="Remove this place?"
-                                                            onConfirm={() => handleDeletePlace(item.id)}
-                                                            okText="Yes"
-                                                            cancelText="No"
-                                                        >
-                                                            <Button type="text" danger icon={<DeleteOutlined />} loading={isDeletingPlace} />
-                                                        </Popconfirm>
-                                                    ]}
-                                                    onClick={() => setHighlightedPlaceId(item.id)}
-                                                    style={{ cursor: 'pointer', padding: '12px', borderRadius: '8px', transition: 'background-color 0.3s' }}
-                                                    className="list-item-hover"
-                                                >
-                                                    <List.Item.Meta avatar={<Avatar src={item.image_url} />} title={item.name} description={item.description} />
-                                                </List.Item>
-                                            )}
-                                        />
+                            {activeView === 'places' && (
+                                <>
+                                    <List
+                                        itemLayout="horizontal"
+                                        dataSource={trip.places}
+                                        renderItem={(item) => (
+                                            <List.Item
+                                                key={item.id}
+                                                actions={[
+                                                    <Popconfirm
+                                                        title={t('remove_place_confirmation')}
+                                                        onConfirm={() => handleDeletePlace(item.id)}
+                                                        okText={t('yes')}
+                                                        cancelText={t('no')}
+                                                    >
+                                                        <Button icon={<DeleteOutlined />} danger loading={isDeletingPlace} />
+                                                    </Popconfirm>
+                                                ]}
+                                                onMouseEnter={() => setHighlightedPlaceId(item.id)}
+                                                onMouseLeave={() => setHighlightedPlaceId(null)}
+                                                className="list-item-hover"
+                                            >
+                                                <List.Item.Meta avatar={<Avatar src={item.image_url} />} title={item.name} description={item.description} />
+                                            </List.Item>
+                                        )}
+                                    />
 
-                                        <Button
-                                            type="primary"
-                                            block
-                                            style={{ marginTop: 16 }}
-                                            onClick={handleGenerateItinerary}
-                                            loading={isGeneratingItinerary}
-                                        >
-                                            {itineraryReady ? "Update Itinerary" : "Generate Itinerary"}
-                                        </Button>
+                                    <Button
+                                        type="primary"
+                                        block
+                                        style={{ marginTop: 16 }}
+                                        onClick={handleGenerateItinerary}
+                                        loading={isGeneratingItinerary}
+                                    >
+                                        {itineraryReady ? t('update_itinerary') : t('generate_itinerary')}
+                                    </Button>
 
-                                    </>
+                                </>
                             )}
 
                             {activeView === 'travel' && (
                                 !travelOptsReady
                                     ? <div style={{ textAlign: 'center', padding: '50px' }}>
-                                        {/* <Spin tip={trip.travel_options_status_message || "Calculating travel options..."} /> */}
-                                        <LoadingAnimationOverlay text={trip.travel_options_status_message || "Calculating travel options..."} />
+                                        <LoadingAnimationOverlay text={trip.travel_options_status_message || t('calculating_travel_options')} />
                                     </div>
                                     : <TripTravelOptions travelOptions={trip.travel_options} />
                             )}
@@ -194,23 +191,27 @@ const TripsDetails = () => {
                             {activeView === 'itinerary' && (
                                 !itineraryReady
                                     ? <div style={{ textAlign: 'center', padding: '50px' }}>
-                                        {/* <Spin tip={trip.itineraries_status_message || "Crafting your itinerary..."} /> */}
-                                        <LoadingAnimationOverlay text={trip.itineraries_status_message || "Crafting your itinerary..."} />
+                                        <LoadingAnimationOverlay text={trip.itineraries_status_message || t('creating_itinerary')} />
                                     </div>
-                                    : <TripItineraryView itinerary={trip.itineraries} onPlaceClick={setHighlightedPlaceId} />
+                                    : <TripItineraryView itinerary={trip.itineraries} />
                             )}
+
                             {activeView === 'booking' && (
                                 isLoadingBooking
-                                    ? <div style={{ textAlign: 'center', padding: '50px' }}><Spin tip="Fetching booking options..." /></div>
+                                    ? <div style={{ textAlign: 'center', padding: '50px' }}>
+                                        <LoadingAnimationOverlay text={t('loading_booking_options')} />
+                                    </div>
                                     : bookingError
-                                        ? <Alert message="Could not fetch booking options." type="error" />
+                                        ? <Alert message={t('error')} description={t('booking_options_error')} type="error" />
                                         : <TripBookingView bookingData={bookingData} />
-                            )}  
-                        </div>
+                            )}
+                        </Card>
                     </Col>
-                    <Col xs={24} md={10} style={{ height: '100%' }}>
+
+                    {/* Right Column - Map */}
+                    <Col span={10} style={{ height: '100%' }}>
                         <TripGoogleMapView
-                            locations={placesReady ? trip.tourist_places_list : []}
+                            tripPlaces={trip.places}
                             highlightedPlaceId={highlightedPlaceId}
                         />
                     </Col>
@@ -218,7 +219,7 @@ const TripsDetails = () => {
             );
         }
 
-        return <Alert message="Trip data is unavailable." type="warning" />;
+        return <Alert message={t('trip_unavailable')} type="warning" />;
     };
 
     return (
@@ -237,7 +238,7 @@ const TripsDetails = () => {
                             style={{ marginRight: 8 }}
                         />
                         <Title level={3} style={{ margin: 0 }}>
-                            {trip?.trip_name || 'Loading...'}
+                            {trip?.trip_name || t('loading')}
                         </Title>
                     </span>
                 }

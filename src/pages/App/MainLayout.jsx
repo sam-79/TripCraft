@@ -24,14 +24,11 @@ import { useTranslation } from "react-i18next";
 import LoadingAnimationOverlay from "../../components/LoadingAnimation";
 import LanguageSelector from "../../components/LanguageSelector";
 
-
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
-
 const { Option } = Select;
 
 const MainLayout = () => {
-
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -61,7 +58,7 @@ const MainLayout = () => {
       {
         key: "/user/trips",
         icon: <GlobalOutlined style={{ fontSize: "25px" }} />,
-        label: t("my_trip"),
+        label: t("my_trips"),
       },
       {
         key: "/user/preferences",
@@ -92,19 +89,17 @@ const MainLayout = () => {
     }, "");
   }, [location.pathname, menuItems]);
 
-
   const showLogoutConfirm = async () => {
     await logoutModal.confirm({
-      title: 'Log Out',
+      title: t('logout_confirmation_title'),
       content: (
         <>
-          "Are you sure to logout."
+          {t('logout_confirmation_message')}
         </>
       ),
       onOk: () => dispatch(logout())
     })
   }
-
 
   return (
     <Layout
@@ -220,12 +215,12 @@ const MainLayout = () => {
               ))}
             </Select> */}
             <LanguageSelector />
-
             <Switch
               checkedChildren={<SunOutlined />}
               unCheckedChildren={<MoonOutlined />}
               checked={theme === "light"}
               onChange={toggleTheme}
+              aria-label={t('toggle_theme')}
             />
           </div>
         </Header>
@@ -246,7 +241,6 @@ const MainLayout = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
             >
-              {/* All the content goes here */}
               <Outlet />
             </motion.div>
           </AnimatePresence>

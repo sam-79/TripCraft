@@ -1,6 +1,7 @@
 import React from 'react';
 import { Timeline, Typography, Card, Tag, Space, Divider } from 'antd';
 import { CarOutlined, CoffeeOutlined, CameraOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -10,24 +11,26 @@ const ItineraryIcon = ({ place }) => {
 };
 
 const TripItineraryView = ({ itinerary }) => {
+    const { t } = useTranslation();
+    
     return (
         <div style={{ height: '100%', overflowY: 'auto', paddingRight: '16px' }}>
             <Timeline>
                 {itinerary.map(day => (
                     <Timeline.Item key={day.day}>
-                        <Title level={4}>Day {day.day} - {new Date(day.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</Title>
-
+                        <Title level={4}>{t('day')} {day.day} - {new Date(day.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</Title>
+                        
                         <Card size="small" style={{ marginBottom: 16, background: '#fafafa', border: '1px solid #f0f0f0' }}>
-                            <Paragraph strong>Travel Tips:</Paragraph>
+                            <Paragraph strong>{t('travel_tips')}:</Paragraph>
                             <Text type="secondary">{day.travel_tips}</Text>
                         </Card>
 
                         <Space wrap style={{ marginBottom: 16 }}>
-                            <Text strong>Food:</Text>
+                            <Text strong>{t('food_tag')}:</Text>
                             {day.food.map(item => <Tag key={item} color="volcano" icon={<CoffeeOutlined />}>{item}</Tag>)}
                         </Space>
                         <Space wrap style={{ marginBottom: 16 }}>
-                            <Text strong>Culture:</Text>
+                            <Text strong>{t('culture_tag')}:</Text>
                             {day.culture.map(item => <Tag key={item} color="geekblue">{item}</Tag>)}
                         </Space>
 
@@ -36,6 +39,7 @@ const TripItineraryView = ({ itinerary }) => {
                             {day.places.map(place => (
                                 <Timeline.Item key={place.id} dot={<ItineraryIcon place={place} />}>
                                     <strong>{place.best_time_to_visit}:</strong> {place.name}
+                                    <div>{place.description}</div>
                                 </Timeline.Item>
                             ))}
                         </Timeline>

@@ -10,37 +10,45 @@ import {
 import { motion } from "framer-motion";
 import { selectIsAuthenticated } from '../../redux/features/authSlice';
 import { logout } from "../../redux/features/authSlice";
+import { useTranslation } from "react-i18next";
+
 const { Title, Paragraph } = Typography;
 
 // --- Component for individual feature cards ---
-const FeatureCard = ({ icon, title, desc, index }) => (
-  <motion.div
-    custom={index}
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true, amount: 0.5 }}
-    variants={{
-      hidden: { opacity: 0, y: 30 },
-      visible: {
-        opacity: 1,
-        y: 0,
-        transition: { delay: index * 0.1, duration: 0.5, ease: "easeOut" },
-      },
-    }}
-    whileHover={{ y: -8 }}
-  >
-    <Card hoverable style={{ borderRadius: 16, textAlign: "center", padding: 16, height: '100%' }}>
-      {icon}
-      <Title level={4} style={{ marginTop: 12 }}>{title}</Title>
-      <Paragraph>{desc}</Paragraph>
-    </Card>
-  </motion.div>
-);
+const FeatureCard = ({ icon, title, desc, index }) => {
+  const { t } = useTranslation();
+  
+  return (
+    <motion.div
+      custom={index}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.5 }}
+      variants={{
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { delay: index * 0.1, duration: 0.5, ease: "easeOut" },
+        },
+      }}
+      whileHover={{ y: -8 }}
+    >
+      <Card hoverable style={{ borderRadius: 16, textAlign: "center", padding: 16, height: '100%' }}>
+        {icon}
+        <Title level={4} style={{ marginTop: 12 }}>{title}</Title>
+        <Paragraph>{desc}</Paragraph>
+      </Card>
+    </motion.div>
+  );
+};
 
 const Landing = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  
   // Determine the correct text and action for the CTA buttons
   const handleCTAClick = () => {
     if (isAuthenticated) {
@@ -50,7 +58,7 @@ const Landing = () => {
     }
   };
 
-  const ctaText = isAuthenticated ? "Go to Dashboard" : "Get Started";
+  const ctaText = isAuthenticated ? t('go_to_dashboard') : t('get_started');
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
@@ -70,10 +78,10 @@ const Landing = () => {
         }}
       >
         <Title style={{ fontSize: "3rem", margin: 0, color: 'white', fontWeight: 'bold' }}>
-          Plan Your Next Adventure ✈️
+          {t('hero_title')}
         </Title>
         <Paragraph style={{ fontSize: "1.2rem", opacity: 0.9, marginTop: '16px', color: 'white' }}>
-          AI-powered trip planning for the modern traveler.
+          {t('hero_subtitle')}
         </Paragraph>
         <Button
           type="primary"
@@ -95,29 +103,29 @@ const Landing = () => {
 
       {/* --- FEATURES SECTION --- */}
       <div style={{ padding: "64px 0" }}>
-        <Title level={2} style={{ textAlign: "center", marginBottom: '48px' }}>Why TripCraft AI?</Title>
+        <Title level={2} style={{ textAlign: "center", marginBottom: '48px' }}>{t('why_tripcraft')}</Title>
         <Row gutter={[24, 24]} justify="center">
           <Col xs={24} sm={12} md={8}>
             <FeatureCard
               icon={<CompassOutlined style={{ fontSize: 28, color: "#A855F7" }} />}
-              title="Smart Trip Planning"
-              desc="Our AI builds your perfect itinerary based on your preferences, budget, and vibe."
+              title={t('feature_planning_title')}
+              desc={t('feature_planning_desc')}
               index={0}
             />
           </Col>
           <Col xs={24} sm={12} md={8}>
             <FeatureCard
               icon={<ThunderboltOutlined style={{ fontSize: 28, color: "#A855F7" }} />}
-              title="Fast & Flexible"
-              desc="Update your plans on the fly and get instant new suggestions and alternatives."
+              title={t('feature_fast_title')}
+              desc={t('feature_fast_desc')}
               index={1}
             />
           </Col>
           <Col xs={24} sm={12} md={8}>
             <FeatureCard
               icon={<SmileOutlined style={{ fontSize: 28, color: "#A855F7" }} />}
-              title="Modern Interface"
-              desc="A clean, fun, and intuitive UI that makes travel planning a breeze."
+              title={t('feature_interface_title')}
+              desc={t('feature_interface_desc')}
               index={2}
             />
           </Col>
@@ -138,7 +146,7 @@ const Landing = () => {
         }}
       >
         <Title level={2} style={{ marginBottom: 8 }}>
-          Ready to plan your dream trip? 🌟
+          {t('cta_heading')}
         </Title>
         <Button
           type="primary"
@@ -151,21 +159,22 @@ const Landing = () => {
             fontWeight: 'bold',
           }}
         >
-          {isAuthenticated ? "Go to Dashboard" : "Sign Up Now"}
+          {isAuthenticated ? t('go_to_dashboard') : t('sign_up_now')}
         </Button>
 
         {isAuthenticated && <Button
-          type="primary"
+          type="default"
           size="large"
           onClick={() => dispatch(logout())}
           style={{
             marginTop: '16px',
+            marginLeft: '16px',
             height: '50px',
             padding: '0 30px',
             fontWeight: 'bold',
           }}
         >
-          Logout
+          {t('logout')}
         </Button>}
       </motion.div>
     </div>

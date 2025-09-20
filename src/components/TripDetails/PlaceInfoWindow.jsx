@@ -3,10 +3,12 @@ import { InfoWindow } from '@vis.gl/react-google-maps';
 import { Card, Typography, Space } from 'antd';
 import { EnvironmentOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
+    const { t } = useTranslation();
     if (!place) return null;
 
     const position = {

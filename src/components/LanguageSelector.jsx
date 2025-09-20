@@ -45,9 +45,14 @@ function LanguageSelector() {
         try {
             // Send the update to the server in the background
             await updateUserSettings({ native_language: value }).unwrap();
-            messageApi.success(`Language updated to ${value}`);
+            // Use setTimeout to allow the language to change before showing the message
+            setTimeout(() => {
+                messageApi.success(i18n.t('language_updated', { language: value }));
+            }, 100);
         } catch (err) {
-            messageApi.error("Failed to save language preference.");
+            setTimeout(() => {
+                messageApi.error(i18n.t('language_update_failed'));
+            }, 100);
             // If the API call fails, revert to the previous language
             dispatch(setLanguage(currentLanguage));
         }

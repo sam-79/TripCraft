@@ -27,9 +27,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../theme/ThemeContext";
 import { useGetTravelRecommendationsQuery } from "../../api/recommendationApi";
-// import { debounce } from "lodash";
-
-// import { fetchPlaceSuggestions } from "../../utils/utils";
+import { useTranslation } from "react-i18next";
 
 const { Title, Paragraph, Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -37,6 +35,8 @@ const { useBreakpoint } = Grid;
 const Explore = () => {
   const { theme } = useContext(ThemeContext);
   const screens = useBreakpoint();
+  const { t } = useTranslation();
+
 
   // const [baseLocationOptions, setBaseLocationOptions] = useState([]);
   // // Debounced search handler to prevent excessive API calls
@@ -82,27 +82,28 @@ const Explore = () => {
       const queryLower = query.toLowerCase();
       const matchesQuery = !query || p.name.toLowerCase().includes(queryLower) || p.description.toLowerCase().includes(queryLower);
       const matchesCity = !city || p.city === city;
-      const matchesActivity = activity === 'ALL' || p.activitytype.toUpperCase() === activity.toUpperCase();
-      const matchesBestTime = bestTime === 'ANY' || p.Best_time_to_visit.toUpperCase() === bestTime.toUpperCase();
+      const matchesActivity = activity === "ALL" || p.activitytype === activity;
+      const matchesBestTime = bestTime === "ANY" || p.Best_time_to_visit === bestTime;
+
       return matchesQuery && matchesCity && matchesActivity && matchesBestTime;
     });
   }, [recommendations, query, city, activity, bestTime]);
 
-  // Memoize options for filters based on the available data
-  const { cityOptions, activityOptions, bestTimeOptions } = useMemo(() => {
-    if (!recommendations) return { cityOptions: [], activityOptions: [], bestTimeOptions: [] };
-    const allPlaces = Object.values(recommendations).flat();
-    const cities = [...new Set(allPlaces.map(p => p.city))].sort();
-    const activities = Object.keys(recommendations).sort();
-    const times = [...new Set(allPlaces.map(p => p.Best_time_to_visit))].sort();
-
+  // Prepare filter options from the data
+  const filterOptions = useMemo(() => {
+    if (!recommendations) return { cities: [], activities: [], bestTimeOptions: [] };
+    
+    // Extract unique cities, activities and best times from recommendations
+    const cities = [...new Set(Object.values(recommendations).flat().map(p => p.city))];
+    const activities = [...new Set(Object.values(recommendations).flat().map(p => p.activitytype))];
+    const times = [...new Set(Object.values(recommendations).flat().map(p => p.Best_time_to_visit))];
+    
     return {
-      cityOptions: cities.map(c => ({ label: c, value: c })),
-      activityOptions: activities,
+      cities: cities.map(c => ({ label: c, value: c })),
+      activities: [{ label: t('all_activities'), value: "ALL" }, ...activities.map(a => ({ label: a, value: a }))],
       bestTimeOptions: times.map(t => ({ label: t, value: t })),
     }
-  }, [recommendations]);
-
+  }, [recommendations, t]);
 
   const clearFilters = () => {
     setQuery("");
@@ -126,59 +127,102 @@ const Explore = () => {
         style={{ borderRadius: 18, padding: screens.xs ? 16 : 24, background: heroGradient, boxShadow: "0 12px 40px rgba(0,0,0,0.12)" }}
       >
         <Title level={screens.xs ? 4 : 3} style={{ margin: 0, color: isLight ? "#1f1f1f" : "#fff" }}>
-          Explore Your Next Adventure ✈️
+          {t('explore_heading')}
         </Title>
         <Text style={{ opacity: 0.9, color: isLight ? "#333" : "#fff" }}>
-          Discover festivals, nature escapes, and hidden gems based on your vibe.
+          {t('explore_subheading')}
         </Text>
 
         <Row gutter={[12, 12]} style={{ marginTop: 16 }}>
           <Col xs={24} sm={12} md={8}>
-            <Input size="large" allowClear value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search places..." prefix={<AimOutlined />} />
-            {/* <AutoComplete
-              prefix={<EnvironmentOutlined />}
-              size="large"
+            <Input 
+              size="large" 
+              allowClear 
+              value={query} 
+              onChange={(e) => setQuery(e.target.value)} 
+              placeholder={t('search_places_placeholder')} 
+              prefix={<AimOutlined />} 
+            />
+          </Col>
+          <Col xs={24} sm={12} md={5}>
+            <Select
+              placeholder={t('select_city_placeholder')}
               allowClear
-              // value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              options={baseLocationOptions}
-              onSearch={(text) => debouncedSearch(text, setBaseLocationOptions)}
-              placeholder="e.g., Nagpur"
-            /> */}
+              style={{ width: "100%" }}
+              size="large"
+              options={filterOptions.cities}
+              value={city}
+              onChange={setCity}
+            />
           </Col>
-          <Col xs={12} sm={6} md={4}>
-            <Select size="large" allowClear placeholder="City" value={city} onChange={setCity} style={{ width: "100%" }} options={cityOptions} />
-          </Col>
-          <Col xs={12} sm={6} md={4}>
-            <Select size="large" allowClear placeholder="Best time" value={bestTime === "ANY" ? undefined : bestTime} onChange={(v) => setBestTime(v || "ANY")} style={{ width: "100%" }} options={bestTimeOptions} />
-          </Col>
-          <Col xs={24} sm={24} md={8}>
-            <Button icon={<ReloadOutlined />} onClick={clearFilters}>Reset Filters</Button>
-          </Col>
-          <Col xs={24}>
-            <Segmented
-              block
+          <Col xs={24} sm={12} md={5}>
+            <Select
+              style={{ width: "100%" }}
+              size="large"
+              options={filterOptions.activities}
               value={activity}
               onChange={setActivity}
-              options={[{ label: "All", value: "ALL" }, ...activityOptions.map(a => ({ label: a, value: a }))]}
-              style={{ background: isLight ? "#ffffffaa" : "#1e1e1e", backdropFilter: "blur(6px)" }}
+              defaultValue="ALL"
             />
+          </Col>
+          <Col xs={24} sm={12} md={6}>
+            <Space style={{ width: "100%" }}>
+              <Select
+                placeholder={t('best_time_placeholder')}
+                style={{ width: screens.xs ? "100%" : 170 }}
+                size="large"
+                options={[
+                  { label: t('any_time'), value: "ANY" },
+                  ...(filterOptions.bestTimeOptions || [])
+                ]}
+                value={bestTime}
+                onChange={setBestTime}
+                defaultValue="ANY"
+              />
+              <Button
+                icon={<ReloadOutlined />}
+                size="large"
+                onClick={clearFilters}
+                aria-label={t('clear_filters')}
+              />
+            </Space>
           </Col>
         </Row>
       </motion.div>
 
-      {/* GRID */}
-      {isLoading ? (
+      {/* ERROR STATE */}
+      {error && (
+        <Alert
+          message={t('error_title')}
+          description={t('explore_error_description')}
+          type="error"
+          showIcon
+        />
+      )}
+
+      {/* LOADING STATE */}
+      {isLoading && (
         <Row gutter={[18, 18]}>
           {Array.from({ length: 8 }).map((_, i) => (
-            <Col key={i} xs={24} sm={12} md={8} lg={6}><Card style={{ borderRadius: 16 }}><Skeleton active paragraph={{ rows: 4 }} /></Card></Col>
+            <Col key={i} xs={24} sm={12} md={8} lg={6}>
+              <Card style={{ borderRadius: 16 }}>
+                <Skeleton active avatar paragraph={{ rows: 2 }} />
+              </Card>
+            </Col>
           ))}
         </Row>
-      ) : error ? (
-        <Alert message="Error" description="Could not fetch recommendations. Please try again later." type="error" showIcon />
-      ) : filteredPlaces.length === 0 ? (
-        <Empty description="No places match your vibe. Try different filters!" />
-      ) : (
+      )}
+
+      {/* EMPTY STATE */}
+      {!isLoading && !error && filteredPlaces.length === 0 && (
+        <Empty
+          description={t('no_places_found')}
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      )}
+
+      {/* RESULTS GRID */}
+      {!isLoading && !error && filteredPlaces.length > 0 && (
         <Row gutter={[18, 18]}>
           <AnimatePresence>
             {filteredPlaces.map((p, idx) => (
@@ -205,14 +249,20 @@ const Explore = () => {
       )}
 
       {/* DETAILS DRAWER */}
-      <Drawer open={open} onClose={() => setOpen(false)} width={screens.xs ? "100%" : 640} closeIcon={<CloseOutlined />} title={activePlace?.name}>
+      <Drawer 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        width={screens.xs ? "100%" : 640} 
+        closeIcon={<CloseOutlined />} 
+        title={activePlace?.name}
+      >
         {activePlace && (
           <Space direction="vertical" size={16} style={{ width: "100%" }}>
             <img src={activePlace.Image_url} alt={activePlace.name} style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 12 }} />
             <Title level={4}>{activePlace.name}, {activePlace.city}</Title>
             <Paragraph>{activePlace.description}</Paragraph>
             <Tag color="geekblue" style={{ fontSize: 14, padding: '5px 10px' }}>{activePlace.activitytype}</Tag>
-            <Tag color="cyan" style={{ fontSize: 14, padding: '5px 10px' }}>Best time to visit: {activePlace.Best_time_to_visit}</Tag>
+            <Tag color="cyan" style={{ fontSize: 14, padding: '5px 10px' }}>{t('best_time_to_visit')}: {activePlace.Best_time_to_visit}</Tag>
           </Space>
         )}
       </Drawer>

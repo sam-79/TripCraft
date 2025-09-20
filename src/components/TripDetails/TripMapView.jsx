@@ -10,6 +10,7 @@ import {
     ZoomControl
 } from "react-leaflet";
 import L from "leaflet";
+import { useTranslation } from "react-i18next";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
@@ -48,6 +49,7 @@ const Routing = ({ positions }) => {
 const TripMapView = ({ locations, highlightedPlaceId }) => {
     const markerRefs = useRef({});
     const mapRef = useRef(null);
+    const { t } = useTranslation();
 
     const positions = locations.map((place) => [
         parseFloat(place.latitude),
@@ -89,14 +91,14 @@ const TripMapView = ({ locations, highlightedPlaceId }) => {
 
             {/* --- Layer Controls --- */}
             <LayersControl position="topright">
-                <LayersControl.BaseLayer checked name="OpenStreetMap">
+                <LayersControl.BaseLayer checked name={t("openstreetmap")}>
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution='&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
                     />
                 </LayersControl.BaseLayer>
 
-                <LayersControl.BaseLayer name="Satellite (Google-like)">
+                <LayersControl.BaseLayer name={t("satellite_view")}>
                     <TileLayer
                         url="https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
                         subdomains={['mt0', 'mt1', 'mt2', 'mt3']}

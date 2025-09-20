@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button, Result } from 'antd';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 const NotFound = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleGoHome = () => {
     navigate('/dashboard'); // Navigate to the main dashboard
@@ -18,14 +20,14 @@ const NotFound = () => {
       <Result
         status="404"
         title="404"
-        subTitle="Sorry, the page you visited does not exist."
+        subTitle={t('page_not_found_message')}
         extra={
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
             <Button type="default" onClick={handleGoBack}>
-              Go Back
+              {t('go_back')}
             </Button>
             <Button type="primary" onClick={handleGoHome}>
-              Back Home
+              {t('back_home')}
             </Button>
           </div>
         }

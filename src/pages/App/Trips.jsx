@@ -24,6 +24,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router";
 import { useGetAllTripsQuery } from "../../api/tripApi";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -34,6 +35,8 @@ const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-G
 const Trips = () => {
   const screens = useBreakpoint();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   const { data: trips, error, isLoading } = useGetAllTripsQuery();
 
   const cardVariants = {
@@ -52,12 +55,12 @@ const Trips = () => {
     const end = new Date(endDate);
 
     if (now > end) {
-      return <Tag icon={<CheckCircleOutlined />} color="success">Completed</Tag>;
+      return <Tag icon={<CheckCircleOutlined />} color="success">{t('completed')}</Tag>;
     }
     if (now < start) {
-      return <Tag icon={<ClockCircleOutlined />} color="processing">Upcoming</Tag>;
+      return <Tag icon={<ClockCircleOutlined />} color="processing">{t('upcoming')}</Tag>;
     }
-    return <Tag icon={<PlayCircleOutlined />} color="warning">Ongoing</Tag>;
+    return <Tag icon={<PlayCircleOutlined />} color="warning">{t('ongoing')}</Tag>;
   };
 
   return (
@@ -68,30 +71,46 @@ const Trips = () => {
         animate={{ opacity: 1, y: 0 }}
         style={{ borderRadius: 18, padding: screens.xs ? 16 : 24, background: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)", boxShadow: "0 10px 28px rgba(0,0,0,0.12)" }}
       >
-        <Title level={screens.xs ? 4 : 3} style={{ margin: 0 }}>Your Trips ✈️</Title>
-        <Text type="secondary">All your planned adventures at a glance.</Text>
+        <Title level={screens.xs ? 4 : 3} style={{ margin: 0 }}>{t('your_trips')}</Title>
+        <Text type="secondary">{t('trips_subheading')}</Text>
       </motion.div>
 
       {/* GRID */}
       {isLoading ? (
         <Row gutter={[18, 18]}>
           {Array.from({ length: 3 }).map((_, i) => (
-            <Col key={i} xs={24} sm={12} lg={8}><Card style={{ borderRadius: 16 }}><Skeleton active /></Card></Col>
+            <Col key={i} xs={24} sm={12} md={8} lg={6}>
+              <Card style={{ borderRadius: 16 }}>
+                <Skeleton active avatar paragraph={{ rows: 2 }} />
+              </Card>
+            </Col>
           ))}
         </Row>
       ) : error ? (
-        <Alert message="Error" description="Could not fetch your trips. Please try again later." type="error" showIcon />
+        <Alert
+          message={t('error_loading_trips')}
+          description={t('trips_error_description')}
+          type="error"
+          showIcon
+        />
       ) : trips?.length === 0 ? (
-        <Empty description="No trips yet. Start planning and your journeys will show up here!" />
+        <Empty
+          description={t('no_trips_yet')}
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        >
+          <Button type="primary" onClick={() => navigate('/user/newtrip')}>
+            {t('create_first_trip')}
+          </Button>
+        </Empty>
       ) : (
         <Row gutter={[18, 18]}>
           <AnimatePresence>
-            {trips.map((trip, idx) => (
-              <Col key={trip.trip_id} xs={24} sm={12} lg={8}>
-                <motion.div custom={idx} initial="hidden" animate="visible" exit={{ opacity: 0 }} variants={cardVariants} whileHover={{ y: -6 }}>
+            {trips?.map((trip, i) => (
+              <Col key={trip.trip_id} xs={24} sm={12} md={8} lg={6}>
+                <motion.div custom={i} initial="hidden" animate="visible" exit={{ opacity: 0 }} variants={cardVariants}>
                   <Card
                     hoverable
-                    style={{ borderRadius: 16, overflow: "hidden" }}
+                    style={{ borderRadius: 16, overflow: 'hidden' }}
                     cover={
                       <div style={{ position: "relative", height: 180 }}>
                         <div style={{ position: "relative", height: 180, background: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -106,13 +125,13 @@ const Trips = () => {
                         </div>
                       </div>
                     }
-                    actions={[<Button type="link" key="details" onClick={() => navigate(`/user/trips/${trip.trip_id}`)}>View Details <ArrowRightOutlined /></Button>]}
+                    actions={[<Button type="link" key="details" onClick={() => navigate(`/user/trips/${trip.trip_id}`)}>{t('view_details')} <ArrowRightOutlined /></Button>]}
                   >
                     <Space direction="vertical" style={{ width: '100%' }}>
                       {getStatusTag(trip.start_date, trip.end_date)}
                       <Space wrap>
                         <Tag icon={<CalendarOutlined />}>{formatDate(trip.start_date)} → {formatDate(trip.end_date)}</Tag>
-                        <Tag icon={<UserOutlined />}>{trip.num_people} people</Tag>
+                        <Tag icon={<UserOutlined />}>{trip.num_people} {t('people')}</Tag>
                         <Tag color="purple">{trip.activity}</Tag>
                       </Space>
                     </Space>

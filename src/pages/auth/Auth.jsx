@@ -7,6 +7,8 @@ import { useLoginWithGoogleMutation } from '../../api/authApi';
 import { selectIsAuthenticated } from '../../redux/features/authSlice';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from 'react-i18next';
+
 const { Title, Paragraph } = Typography;
 
 // High-quality travel image for the background
@@ -15,6 +17,8 @@ const imageUrl = 'https://images.unsplash.com/photo-1527631746610-bca00a040d60?q
 const Auth = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const { t } = useTranslation();
+  
   const [loginWithGoogle, { isLoading, isError, error }] = useLoginWithGoogleMutation();
 
   // Handle the success callback from the Google login
@@ -68,7 +72,7 @@ const Auth = () => {
             }}
           >
             <Title level={2} style={{ color: 'white', fontWeight: 'bold', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-              Your journey begins with a single click.
+              {t('auth_tagline')}
             </Title>
           </Col>
 
@@ -84,13 +88,12 @@ const Auth = () => {
               textAlign: 'center'
             }}
           >
-            <Title level={2}>Welcome to TripCraft AI</Title>
+            <Title level={2}>{t('welcome_message')}</Title>
             <Paragraph style={{ marginBottom: '40px', color: '#666' }}>
-              Sign in to unlock personalized, AI-powered travel itineraries in seconds.
+              {t('auth_subtitle')}
             </Paragraph>
 
             {/* Custom Google Login Button */}
-
             <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
               <AnimatePresence mode="wait">
                 {!isLoading ? (
@@ -117,29 +120,28 @@ const Auth = () => {
                     transition={{ duration: 0.3 }}
                     style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 48 }}
                   >
-                    <Spin tip="Verifying..." size="large" />
+                    <Spin tip={t('verifying')} size="large" />
                   </motion.div>
                 }
               </AnimatePresence>
             </GoogleOAuthProvider>
 
-            {/* {isLoading && <Spin style={{ marginTop: '20px' }} tip="Verifying..." />} */}
-            {isError && <Alert style={{ marginTop: '20px' }} message={error?.data?.detail || "An error occurred"} type="error" />}
+            {isError && <Alert style={{ marginTop: '20px' }} message={error?.data?.detail || t('login_error')} type="error" />}
 
-            <Divider style={{ margin: '40px 0' }}>Features</Divider>
+            <Divider style={{ margin: '40px 0' }}>{t('features')}</Divider>
 
             <div style={{ textAlign: 'left', color: '#333' }}>
               <Paragraph>
                 <ThunderboltOutlined style={{ color: '#A855F7', marginRight: '10px' }} />
-                Instantly craft trips with our smart AI.
+                {t('feature_instant_trips')}
               </Paragraph>
               <Paragraph>
                 <EnvironmentOutlined style={{ color: '#A855F7', marginRight: '10px' }} />
-                Discover hidden gems and local favorites.
+                {t('feature_discover_places')}
               </Paragraph>
               <Paragraph>
                 <CheckCircleOutlined style={{ color: '#A855F7', marginRight: '10px' }} />
-                Organize your plans all in one place.
+                {t('feature_organize')}
               </Paragraph>
             </div>
           </Col>

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { Row, Col, Card, message, Spin, Alert } from "antd";
+import { Row, Col, Card, message, Spin, Alert, Grid } from "antd";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import TripForm from "../../components/newtrip/NewTripForm";
 import MapView from "../../components/newtrip/MapView";
 
@@ -12,6 +13,8 @@ import LoadingAnimationOverlay from "../../components/LoadingAnimation";
 const NewTrip = () => {
   const navigate = useNavigate();
   const [messageApi, messageApiContextHolder] = message.useMessage();
+  const { t } = useTranslation();
+  const screens = Grid.useBreakpoint();
 
   // 1. Fetch user preferences to pre-fill the form.
   const { data: preferences, isLoading: isLoadingPreferences, isSuccess, error: preferencesError, } = useGetUserPreferencesQuery();
@@ -28,11 +31,11 @@ const NewTrip = () => {
       console.log(`New Trip response: ${response}`)
       console.log(`New Trip newTripData: ${newTripData}`)
 
-      messageApi.info(`Trip creating added to queue ${tripId}`); // Show loading for 2 seconds
+      messageApi.info(t('trip_creation_queued', { tripId })); // Show loading for 2 seconds
       navigate(`/user/trips/${tripId}`);
 
     } catch (err) {
-      messageApi.error(err.data?.message || "Failed to create trip. Please try again.");
+      messageApi.error(err.data?.message || t('trip_creation_failed'));
       console.error('Failed to create trip:', err);
     }
   };
@@ -42,31 +45,17 @@ const NewTrip = () => {
   }
 
   if (isAddingTrip) {
-    return <LoadingAnimationOverlay text={"Creating your trip"} />
+    return <LoadingAnimationOverlay text={t("creating_your_trip")} />
   }
 
   return (
     <Row gutter={16} style={{ height: "100%", minHeight: "85vh" }}>
       {messageApiContextHolder}
-      <Col xs={24} md={14} >
-        <Card style={{ borderRadius: 16, height: "100%", overflowY: 'auto' }}>
-          {
-            isLoadingPreferences ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }} >
-                {/* <Spin tip="Loading your preferences..." size="large" /> */}
-                <LoadingAnimationOverlay text={"Loading your preferences..."} />
-              </div>
-            ) : (
-              <TripForm
-                onSubmit={handleFormSubmit}
-                defaultPreferences={preferences.data}
-                isAddingTrip={isAddingTrip}
-              />
-            )}
-        </Card>
+      <Col xs={24} md={14} lg={16}>
+        <TripForm onSubmit={handleFormSubmit} defaultPreferences={preferences?.data} isAddingTrip={isAddingTrip} />
       </Col>
-      < Col xs={24} md={10} >
-        <Card style={{ borderRadius: 16, height: "100%", overflow: "hidden" }}>
+      <Col xs={24} md={10} lg={8} style={{ height: screens.xs ? "300px" : "100%" }}>
+        <Card style={{ height: "100%", borderRadius: 16 }} bodyStyle={{ padding: 8, height: "100%" }}>
           <MapView />
         </Card>
       </Col>

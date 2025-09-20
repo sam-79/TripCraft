@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { APIProvider, Map } from '@vis.gl/react-google-maps';
 import { Typography } from 'antd';
+import { useTranslation } from 'react-i18next';
 import MapHandler from './MapHandler';
 import CustomMarker from './CustomMarker';
 import PlaceInfoWindow from './PlaceInfoWindow';
@@ -11,6 +12,7 @@ import "../../styles/TripGoogleMapView.css"
 const { Title, Text } = Typography;
 
 const TripGoogleMapView = ({ locations, highlightedPlaceId }) => {
+    const { t } = useTranslation();
     const [selectedPlace, setSelectedPlace] = useState(null);
 
     // Find the index of the currently selected place
@@ -42,14 +44,14 @@ const TripGoogleMapView = ({ locations, highlightedPlaceId }) => {
     if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
         return (
             <div className="map-error-container">
-                <Title level={4}>Configuration Missing</Title>
-                <Text>Please add <Text code>VITE_GOOGLE_MAPS_API_KEY</Text> to your .env file.</Text>
+                <Title level={4}>{t('configuration_missing')}</Title>
+                <Text>{t('add_google_maps_key')} <Text code>VITE_GOOGLE_MAPS_API_KEY</Text> {t('to_env_file')}</Text>
             </div>
         );
     }
 
     if (locations.length === 0) {
-        return <div className="map-placeholder">Finding locations for your trip...</div>;
+        return <div className="map-placeholder">{t('finding_locations')}</div>;
     }
 
     return (

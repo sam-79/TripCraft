@@ -3,7 +3,9 @@ import { Typography, Descriptions, Tag, Space, Button, Form, InputNumber, DatePi
 import { EnvironmentOutlined, FlagOutlined, CalendarOutlined, DollarOutlined, CarOutlined, UserOutlined, SmileOutlined, TagsOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
 import { useUpdateTripMutation } from '../../api/tripApi';
 import dayjs from 'dayjs';
-import "../../styles/TripInfo.css"
+import "../../styles/TripInfo.css";
+import { useTranslation } from 'react-i18next';
+
 const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
 
@@ -11,16 +13,21 @@ const activityOptions = ["Adventure", "Heritage", "Nightlife", "Relaxation", "Na
 const travelModeOptions = ["Bike", "Car", "Flight", "Train", "Train&Road", "Flight&Road", "Custom"];
 const travellingWithOptions = ["Solo", "Partner", "Friends", "Family"];
 
-const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
 const TripInfoDisplay = ({ trip }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [form] = Form.useForm();
     const [updateTrip, { isLoading: isUpdating }] = useUpdateTripMutation();
+    const { t } = useTranslation();
 
-    // When edit mode is activated, populate the form with the current trip data
+    // Format date for display
+    const formatDate = (date) => {
+        if (!date) return '';
+        return dayjs(date).format('MMM D, YYYY');
+    };
+
+    // Initialize form with trip data when editing
     useEffect(() => {
-        if (isEditing) {
+        if (isEditing && trip) {
             form.setFieldsValue({
                 ...trip,
                 dates: [dayjs(trip.start_date), dayjs(trip.end_date)],
@@ -28,77 +35,76 @@ const TripInfoDisplay = ({ trip }) => {
         }
     }, [isEditing, trip, form]);
 
-    const handleSave = async (values) => {
-        const payload = {
-            ...values,
-            start_date: values.dates[0].toISOString(),
-            end_date: values.dates[1].toISOString(),
-        };
-        delete payload.dates;
-
+    const handleFormSubmit = async (values) => {
         try {
-            await updateTrip({ tripId: trip.trip_id, ...payload }).unwrap();
-            message.success("Trip updated successfully!");
+            const updatedTrip = {
+                trip_id: trip.trip_id,
+                ...values,
+                start_date: values.dates[0].toISOString(),
+                end_date: values.dates[1].toISOString(),
+            };
+            delete updatedTrip.dates;
+
+            await updateTrip(updatedTrip).unwrap();
+            message.success(t('trip_update_success'));
             setIsEditing(false);
-        } catch (err) {
-            message.error("Failed to update trip.");
+        } catch (error) {
+            message.error(t('trip_update_error'));
         }
     };
 
     if (isEditing) {
         return (
-            <div style={{ padding: '0 16px' }}>
-                <Row align="middle" justify="center" style={{ marginBottom: 16 }}>
-                    <Col>
-                        <div className="location-text">
-                            <strong>{trip.base_location}</strong>
-                        </div>
-                    </Col>
-                    <Col>
-                        <div className="arrow-animation">→</div>
-                    </Col>
-                    <Col>
-                        <div className="location-text">
-                            <strong>{trip.destination}</strong>
-                        </div>
-                    </Col>
-                </Row>
-
-                <Title level={5}>Edit Trip Details</Title>
-                <Form form={form} layout="vertical" onFinish={handleSave}>
-                    <Form.Item name="dates" label="Start & End Dates">
+            <div style={{ height: '100%', overflowY: 'auto', paddingRight: '16px' }}>
+                <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
+                    <Form.Item name="trip_name" label={t('trip_name')}>
+                        <Input />
+                    </Form.Item>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item name="destination" label={t('destination')}>
+                                <Input />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item name="base_location" label={t('base_location')}>
+                                <Input />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Form.Item name="dates" label={t('dates')}>
                         <RangePicker style={{ width: '100%' }} />
                     </Form.Item>
                     <Row gutter={16}>
                         <Col span={12}>
-                            <Form.Item name="budget" label="Budget (INR)">
-                                <InputNumber prefix="₹" style={{ width: '100%' }} />
+                            <Form.Item name="budget" label={t('budget')}>
+                                <InputNumber prefix="₹" style={{ width: '100%' }} min={1000} />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item name="num_people" label="Number of People">
+                            <Form.Item name="num_people" label={t('number_of_people')}>
                                 <InputNumber style={{ width: '100%' }} min={1} />
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row gutter={16}>
                         <Col span={12}>
-                            <Form.Item name="travel_mode" label="Travel Mode">
+                            <Form.Item name="travel_mode" label={t('travel_mode')}>
                                 <Select options={travelModeOptions.map(o => ({ label: o, value: o }))} />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item name="travelling_with" label="Travelling With">
+                            <Form.Item name="travelling_with" label={t('travelling_with')}>
                                 <Select options={travellingWithOptions.map(o => ({ label: o, value: o }))} />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Form.Item name="activities" label="Activities">
+                    <Form.Item name="activities" label={t('activities')}>
                         <Checkbox.Group options={activityOptions} />
                     </Form.Item>
                     <Space>
-                        <Button type="primary" htmlType="submit" loading={isUpdating} icon={<SaveOutlined />}>Save</Button>
-                        <Button onClick={() => setIsEditing(false)}>Cancel</Button>
+                        <Button type="primary" htmlType="submit" loading={isUpdating} icon={<SaveOutlined />}>{t('save')}</Button>
+                        <Button onClick={() => setIsEditing(false)}>{t('cancel')}</Button>
                     </Space>
                 </Form>
             </div>
@@ -108,21 +114,22 @@ const TripInfoDisplay = ({ trip }) => {
     return (
         <div style={{ height: '100%', overflowY: 'auto', paddingRight: '16px' }}>
             <Descriptions bordered column={1} layout="horizontal" size="small">
-                <Descriptions.Item label={<><FlagOutlined /> Destination</>}><Text strong>{trip.destination}</Text></Descriptions.Item>
-                <Descriptions.Item label={<><EnvironmentOutlined /> Base Location</>}><Text>{trip.base_location}</Text></Descriptions.Item>
-                <Descriptions.Item label={<><CalendarOutlined /> Dates</>}><Tag color="blue">{formatDate(trip.start_date)}</Tag> to <Tag color="blue">{formatDate(trip.end_date)}</Tag></Descriptions.Item>
-                <Descriptions.Item label={<><DollarOutlined /> Budget</>}><Text>₹{trip.budget.toLocaleString('en-IN')}</Text></Descriptions.Item>
-                <Descriptions.Item label={<><CarOutlined /> Travel Mode</>}><Tag>{trip.travel_mode}</Tag></Descriptions.Item>
-                <Descriptions.Item label={<><UserOutlined /> People</>}><Text>{trip.num_people}</Text></Descriptions.Item>
-                <Descriptions.Item label={<><SmileOutlined /> Travelling With</>}><Tag color="gold">{trip.travelling_with}</Tag></Descriptions.Item>
-                <Descriptions.Item label={<><TagsOutlined /> Activities</>}><Space wrap>{trip.activities.map(act => <Tag key={act} color="purple">{act}</Tag>)}</Space></Descriptions.Item>
+                <Descriptions.Item label={<><FlagOutlined /> {t('destination')}</>}><Text strong>{trip.destination}</Text></Descriptions.Item>
+                <Descriptions.Item label={<><EnvironmentOutlined /> {t('base_location')}</>}><Text>{trip.base_location}</Text></Descriptions.Item>
+                <Descriptions.Item label={<><CalendarOutlined /> {t('dates')}</>}><Tag color="blue">{formatDate(trip.start_date)}</Tag> to <Tag color="blue">{formatDate(trip.end_date)}</Tag></Descriptions.Item>
+                <Descriptions.Item label={<><DollarOutlined /> {t('budget')}</>}><Text>₹{trip.budget.toLocaleString('en-IN')}</Text></Descriptions.Item>
+                <Descriptions.Item label={<><CarOutlined /> {t('travel_mode')}</>}><Tag>{trip.travel_mode}</Tag></Descriptions.Item>
+                <Descriptions.Item label={<><UserOutlined /> {t('people')}</>}><Text>{trip.num_people}</Text></Descriptions.Item>
+                <Descriptions.Item label={<><SmileOutlined /> {t('travelling_with')}</>}><Tag color="gold">{trip.travelling_with}</Tag></Descriptions.Item>
+                <Descriptions.Item label={<><TagsOutlined /> {t('activities')}</>}><Space wrap>{trip.activities.map(act => <Tag key={act} color="purple">{act}</Tag>)}</Space></Descriptions.Item>
             </Descriptions>
             <Button
+                type="primary"
                 icon={<EditOutlined />}
                 onClick={() => setIsEditing(true)}
-                style={{ float: 'right', zIndex: 10 }}
+                style={{ marginTop: 16 }}
             >
-                Edit
+                {t('edit_trip_details')}
             </Button>
         </div>
     );

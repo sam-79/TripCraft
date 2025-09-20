@@ -3,6 +3,7 @@ import { Row, Col, Card, Typography, Tag, Skeleton, Empty } from "antd";
 import { EnvironmentOutlined, StarFilled } from "@ant-design/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../theme/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
@@ -48,13 +49,13 @@ async function fetchNearbyPlaces(lat, lng) {
     image: "https://en.wikipedia.org/wiki/Taljai_Hills",
   }
 ];
-
 }
 
 const Dashboard = () => {
     const { theme } = useContext(ThemeContext);
     const [loading, setLoading] = useState(true);
     const [places, setPlaces] = useState([]);
+    const { t } = useTranslation();
 
     const isLight = theme === "light";
 
@@ -70,34 +71,25 @@ const Dashboard = () => {
                         setLoading(false);
                     },
                     async () => {
-                        // fallback (random coords or IP based later)
-                        const data = await fetchNearbyPlaces(19.076, 72.8777); 
+                        // Fallback if location is denied
+                        const data = await fetchNearbyPlaces(18.52, 73.85); // Default to Pune coordinates
                         setPlaces(data);
                         setLoading(false);
                     }
                 );
-            } catch (err) {
-                console.error("Error fetching location", err);
+            } catch (error) {
                 setLoading(false);
             }
         };
+
         getNearby();
     }, []);
 
-    const cardVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: (i) => ({
-            opacity: 1,
-            y: 0,
-            transition: { delay: i * 0.1, duration: 0.4, ease: "easeOut" },
-        }),
-    };
-
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            {/* HERO */}
+            {/* HEADER */}
             <motion.div
-                initial={{ opacity: 0, y: -12 }}
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 style={{
@@ -110,10 +102,10 @@ const Dashboard = () => {
                 }}
             >
                 <Title level={3} style={{ margin: 0 }}>
-                    Hey Traveler 👋
+                    {t('dashboard_greeting')}
                 </Title>
                 <Text type="secondary">
-                    Here are some famous spots near you 🌍
+                    {t('nearby_places_intro')}
                 </Text>
             </motion.div>
 
@@ -122,33 +114,44 @@ const Dashboard = () => {
                 <Row gutter={[16, 16]}>
                     {Array.from({ length: 3 }).map((_, i) => (
                         <Col key={i} xs={24} sm={12} md={8}>
-                            <Card style={{ borderRadius: 16 }} cover={<div style={{ height: 150 }} />}>
-                                <Skeleton active paragraph={{ rows: 2 }} />
+                            <Card style={{ borderRadius: 16 }}>
+                                <Skeleton active avatar paragraph={{ rows: 2 }} />
                             </Card>
                         </Col>
                     ))}
                 </Row>
             ) : places.length === 0 ? (
-                <Empty description="No nearby places found." />
+                <Empty description={t('no_nearby_places')} />
             ) : (
                 <Row gutter={[16, 16]}>
                     <AnimatePresence>
-                        {places.map((place, idx) => (
-                            <Col key={idx} xs={24} sm={12} md={8}>
+                        {places.map((place, i) => (
+                            <Col key={i} xs={24} sm={12} md={8}>
                                 <motion.div
-                                    custom={idx}
-                                    initial="hidden"
-                                    animate="visible"
-                                    variants={cardVariants}
-                                    whileHover={{ y: -6 }}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{
+                                        opacity: 1,
+                                        y: 0,
+                                        transition: { delay: i * 0.1 },
+                                    }}
+                                    whileHover={{ y: -5 }}
                                 >
                                     <Card
                                         hoverable
                                         style={{ borderRadius: 16, overflow: "hidden" }}
                                         cover={
-                                            <div style={{ height: 180, overflow: "hidden" }}>
+                                            <div
+                                                style={{
+                                                    height: 200,
+                                                    background: `linear-gradient(${
+                                                        i * 60
+                                                    }deg, #a18cd1 0%, #fbc2eb 100%)`,
+                                                    position: "relative",
+                                                }}
+                                            >
+                                                {/* Placeholder for an actual image */}
                                                 <img
-                                                    src={place.image}
+                                                    src={`https://source.unsplash.com/400x200/?${place.name}`}
                                                     alt={place.name}
                                                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                                 />
