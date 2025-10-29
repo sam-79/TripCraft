@@ -11,6 +11,10 @@ import Preferences from "../pages/App/Preferences";
 import Profile from "../pages/App/Profile";
 import NotFound from "../pages/NotFound";
 import Dashboard from "../pages/App/Dashboard";
+import TripBooking from "../pages/App/BookingRecommendations";
+import ExploreBookings from "../pages/App/ExploreBookings";
+import PaymentHistory from "../pages/App/PaymentHistory";
+import AllBookings from "../pages/App/AllBookings";
 
 const router = createBrowserRouter([
     {
@@ -47,6 +51,9 @@ const router = createBrowserRouter([
                 {
                     path: "/user/trips/:tripId",
                     Component: TripsDetails
+                },{
+                    path: "/user/trips/:tripId/booking",
+                    Component: TripBooking
                 },
                 {
                     path: "/user/preferences",
@@ -55,6 +62,18 @@ const router = createBrowserRouter([
                 {
                     path: "/user/profile",
                     Component: Profile
+                },
+                {
+                    path: "/user/bookings/search/:tabKey?",
+                    Component: ExploreBookings
+                },
+                {
+                    path:"/user/bookings/my-bookings/:tabKey?",
+                    Component: AllBookings
+                },
+                {
+                    path:"/user/bookings/payments",
+                    Component: PaymentHistory
                 }
             ]
         }]

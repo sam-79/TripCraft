@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import {
   Card,
   Row,
@@ -8,122 +8,228 @@ import {
   Typography,
   Tag,
   Empty,
-  Skeleton,
-  Grid,
   Alert,
+  Spin,
+  Modal,
+  Carousel,
 } from "antd";
 import {
   EnvironmentOutlined,
   CalendarOutlined,
+  DollarOutlined,
   UserOutlined,
   ArrowRightOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  PlayCircleOutlined,
 } from "@ant-design/icons";
-import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router";
 import { useGetAllTripsQuery } from "../../api/tripApi";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router";
+import dayjs from "dayjs";
 
-const { Title, Text } = Typography;
-const { useBreakpoint } = Grid;
+const { Title, Text, Paragraph } = Typography;
 
-// Helper function to format dates
-const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-const Trips = () => {
-  const screens = useBreakpoint();
+// --- TripCard Sub-Component ---
+// Breaking the card into its own component helps manage state and refs for each card individually.
+const TripCard = ({ trip, index }) => {
   const navigate = useNavigate();
-  const { data: trips, error, isLoading } = useGetAllTripsQuery();
+  const carouselRef = useRef(null);
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { delay: i * 0.1, duration: 0.4, ease: "easeOut" },
-    }),
-  };
-
-  const getStatusTag = (startDate, endDate) => {
-    const now = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (now > end) {
-      return <Tag icon={<CheckCircleOutlined />} color="success">Completed</Tag>;
-    }
-    if (now < start) {
-      return <Tag icon={<ClockCircleOutlined />} color="processing">Upcoming</Tag>;
-    }
-    return <Tag icon={<PlayCircleOutlined />} color="warning">Ongoing</Tag>;
-  };
+  const handleMouseEnter = () => carouselRef.current?.pause();
+  const handleMouseLeave = () => carouselRef.current?.play();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* HEADER */}
-      <motion.div
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        style={{ borderRadius: 18, padding: screens.xs ? 16 : 24, background: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)", boxShadow: "0 10px 28px rgba(0,0,0,0.12)" }}
+    <motion.div
+      custom={index}
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: { opacity: 0, y: 30 },
+        visible: (i) => ({
+          opacity: 1,
+          y: 0,
+          transition: { delay: i * 0.1, duration: 0.4 },
+        }),
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <Card
+        hoverable
+        style={{ borderRadius: 16, overflow: "hidden" }}
+        cover={
+          trip.destination_image_url &&
+            trip.destination_image_url.length > 0 ? (
+            <Carousel
+              arrows
+              ref={carouselRef}
+              autoplay
+              dotPosition="bottom"
+              effect="fade"
+            >
+              {trip.destination_image_url.map((url, i) => (
+                <div key={i}>
+                  <img
+                    alt={`${trip.trip_name} image ${i + 1}`}
+                    src={url}
+                    style={{ width: "100%", height: 220, objectFit: "cover" }}
+                  />
+                </div>
+              ))}
+            </Carousel>
+          ) : (
+            <div
+              style={{
+                height: 220,
+                background: "#f0f2f5",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <EnvironmentOutlined style={{ fontSize: 48, color: "#ccc" }} />
+            </div>
+          )
+        }
+        actions={[
+          <Button
+            type="link"
+            key="details"
+            onClick={() => navigate(`/user/trips/${trip.trip_id}`)}
+          >
+            View Details <ArrowRightOutlined />
+          </Button>,
+        ]}
       >
-        <Title level={screens.xs ? 4 : 3} style={{ margin: 0 }}>Your Trips ✈️</Title>
-        <Text type="secondary">All your planned adventures at a glance.</Text>
-      </motion.div>
+        <Title
+          level={4}
+          style={{
+            margin: 0,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {trip.trip_name}
+        </Title>
+        <Text type="secondary">
+          <EnvironmentOutlined /> {trip.destination_full_name}
+        </Text>
 
-      {/* GRID */}
-      {isLoading ? (
-        <Row gutter={[18, 18]}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Col key={i} xs={24} sm={12} lg={8}><Card style={{ borderRadius: 16 }}><Skeleton active /></Card></Col>
-          ))}
-        </Row>
-      ) : error ? (
-        <Alert message="Error" description="Could not fetch your trips. Please try again later." type="error" showIcon />
-      ) : trips?.length === 0 ? (
-        <Empty description="No trips yet. Start planning and your journeys will show up here!" />
-      ) : (
-        <Row gutter={[18, 18]}>
-          <AnimatePresence>
-            {trips.map((trip, idx) => (
-              <Col key={trip.trip_id} xs={24} sm={12} lg={8}>
-                <motion.div custom={idx} initial="hidden" animate="visible" exit={{ opacity: 0 }} variants={cardVariants} whileHover={{ y: -6 }}>
-                  <Card
-                    hoverable
-                    style={{ borderRadius: 16, overflow: "hidden" }}
-                    cover={
-                      <div style={{ position: "relative", height: 180 }}>
-                        <div style={{ position: "relative", height: 180, background: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <div style={{ textAlign: "center" }}>
-                            <Title level={4} style={{ margin: 0, color: "#234", textShadow: '0 1px 3px #fff' }}>{trip.trip_name}</Title>
-                          </div>
-                        </div>
-                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)" }} />
-                        <div style={{ position: "absolute", bottom: 12, left: 16, color: "#fff" }}>
-                          <Title level={5} style={{ margin: 0, color: "#fff", textShadow: '0 1px 3px #000' }}>{trip.trip_name}</Title>
-                          <Text style={{ color: "#fff" }}><EnvironmentOutlined /> {trip.destination}</Text>
-                        </div>
-                      </div>
-                    }
-                    actions={[<Button type="link" key="details" onClick={() => navigate(`/user/trips/${trip.trip_id}`)}>View Details <ArrowRightOutlined /></Button>]}
-                  >
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                      {getStatusTag(trip.start_date, trip.end_date)}
-                      <Space wrap>
-                        <Tag icon={<CalendarOutlined />}>{formatDate(trip.start_date)} → {formatDate(trip.end_date)}</Tag>
-                        <Tag icon={<UserOutlined />}>{trip.num_people} people</Tag>
-                        <Tag color="purple">{trip.activity}</Tag>
-                      </Space>
-                    </Space>
-                  </Card>
-                </motion.div>
-              </Col>
-            ))}
-          </AnimatePresence>
-        </Row>
-      )}
-    </div>
+        <Paragraph
+          style={{ marginTop: 12, minHeight: 44 }}
+          ellipsis={{
+            rows: 2,
+            expandable: "collapsible",
+            // symbol: "more",
+            defaultExpanded: false,
+            // onExpand: (event) => {
+            //   event.stopPropagation(); // Prevent card click navigation
+            // },
+          }}
+        >
+          {trip.destination_details}
+        </Paragraph>
+
+        <div style={{ marginTop: 16 }}>
+          <Space direction="vertical" style={{ width: "100%" }}>
+            <Text>
+              <CalendarOutlined />{" "}
+              {dayjs(trip.start_date).format("MMM D, YYYY")} -{" "}
+              {dayjs(trip.end_date).format("MMM D, YYYY")}
+            </Text>
+            <Text>
+              <DollarOutlined /> ₹{trip.budget.toLocaleString("en-IN")} for{" "}
+              {trip.num_people} people ({trip.travelling_with})
+            </Text>
+            <Space wrap>
+              {trip.activities.map((activity) => (
+                <Tag key={activity} color="blue">
+                  {activity}
+                </Tag>
+              ))}
+            </Space>
+          </Space>
+        </div>
+      </Card>
+    </motion.div>
+  );
+};
+
+// --- Main Trips Component ---
+const Trips = () => {
+  const { data: trips, error, isLoading } = useGetAllTripsQuery();
+  const navigate = useNavigate();
+
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: "center", padding: "50px" }}>
+        <Spin size="large" tip="Loading your trips..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert
+        message="Error"
+        description="Could not fetch your trips. Please try again."
+        type="error"
+        showIcon
+      />
+    );
+  }
+
+  if (!trips || trips.length === 0) {
+    return (
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={
+          <span>
+            No trips planned yet! <br /> Let's create your first adventure.
+          </span>
+        }
+      >
+        <Button type="primary" onClick={() => navigate("/user/newtrip")}>
+          Create New Trip
+        </Button>
+      </Empty>
+    );
+  }
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Title level={3} style={{ marginBottom: 24 }}>
+          Your Planned Trips
+        </Title>
+      </motion.div>
+      <Row gutter={[24, 24]}>
+        {trips.map((trip, index) => (
+          <Col xs={24} sm={24} md={12} lg={8} key={trip.trip_id}>
+            <TripCard
+              trip={trip}
+              index={index}
+            // onExpandDescription={setExpandedTrip}
+            />
+          </Col>
+        ))}
+      </Row>
+
+      {/* Modal for showing the full description
+      <Modal
+        title={expandedTrip?.trip_name}
+        open={!!expandedTrip}
+        onCancel={() => setExpandedTrip(null)}
+        footer={null}
+      >
+        <Title level={5} type="secondary">
+          {expandedTrip?.destination_full_name}
+        </Title>
+        <Paragraph>{expandedTrip?.destination_details}</Paragraph>
+      </Modal> */}
+    </>
   );
 };
 

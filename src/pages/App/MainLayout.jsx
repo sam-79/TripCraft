@@ -1,6 +1,13 @@
-import React, { useState, useContext, useMemo, useEffect } from "react";
+import React, { useState, useContext, useMemo } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
-import { Layout, Menu, Button, Switch, Typography, Select, Modal, message } from "antd";
+import {
+  Layout,
+  Menu,
+  Button,
+  Switch,
+  Typography,
+  Modal,
+} from "antd";
 import {
   DashboardOutlined,
   PlusCircleOutlined,
@@ -13,70 +20,90 @@ import {
   MenuUnfoldOutlined,
   ProfileOutlined,
   LogoutOutlined,
+  BookOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../theme/ThemeContext";
 import { APP_TITLE, APP_TITLE_SHORT } from "../../constants/contants";
 import { logout } from "../../redux/features/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import "../../styles/MainLayout.css";
 import { useTranslation } from "react-i18next";
-import LoadingAnimationOverlay from "../../components/LoadingAnimation";
 import LanguageSelector from "../../components/LanguageSelector";
-
 
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
 
-const { Option } = Select;
-
 const MainLayout = () => {
-
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useContext(ThemeContext);
   const dispatch = useDispatch();
   const [logoutModal, logoutContext] = Modal.useModal();
-
   const { t } = useTranslation();
 
+  // --- Define Sidebar Menu ---
   const menuItems = useMemo(
     () => [
       {
         key: "/user",
-        icon: <DashboardOutlined style={{ fontSize: "25px" }} />,
+        icon: <DashboardOutlined style={{ fontSize: "22px" }} />,
         label: t("dashboard"),
       },
       {
         key: "/user/newtrip",
-        icon: <PlusCircleOutlined style={{ fontSize: "25px" }} />,
+        icon: <PlusCircleOutlined style={{ fontSize: "22px" }} />,
         label: t("new_trip"),
       },
       {
         key: "/user/explore",
-        icon: <CompassOutlined style={{ fontSize: "25px" }} />,
+        icon: <CompassOutlined style={{ fontSize: "22px" }} />,
         label: t("explore"),
       },
       {
         key: "/user/trips",
-        icon: <GlobalOutlined style={{ fontSize: "25px" }} />,
+        icon: <GlobalOutlined style={{ fontSize: "22px" }} />,
         label: t("my_trip"),
       },
       {
+        key: "/user/bookings",
+        icon: <BookOutlined style={{ fontSize: "22px" }} />,
+        label: "Booking",
+        children: [
+          {
+            key: "/user/bookings/search",
+            icon: <SearchOutlined />,
+            label: "Search",
+          },
+          {
+            key: "/user/bookings/my-bookings",
+            icon: <ProfileOutlined />,
+            label: "My Bookings",
+          },
+        ],
+      },
+      {
+        key: "/user/bookings/payments",
+        icon: <ProfileOutlined />,
+        label: "Payments",
+      },
+      {
         key: "/user/preferences",
-        icon: <SettingOutlined style={{ fontSize: "25px" }} />,
+        icon: <SettingOutlined style={{ fontSize: "22px" }} />,
         label: t("preferences"),
       },
       {
         key: "/user/profile",
-        icon: <ProfileOutlined style={{ fontSize: "25px" }} />,
+        icon: <ProfileOutlined style={{ fontSize: "22px" }} />,
         label: t("profile"),
       },
-    ], [t]
+    ],
+    [t]
   );
 
-  // dynamic selected menu
+  // --- Detect active route ---
   const selectedKey = useMemo(() => {
     return menuItems.reduce((bestMatch, item) => {
       if (
@@ -92,19 +119,14 @@ const MainLayout = () => {
     }, "");
   }, [location.pathname, menuItems]);
 
-
+  // --- Logout confirmation ---
   const showLogoutConfirm = async () => {
     await logoutModal.confirm({
-      title: 'Log Out',
-      content: (
-        <>
-          "Are you sure to logout."
-        </>
-      ),
-      onOk: () => dispatch(logout())
-    })
-  }
-
+      title: "Log Out",
+      content: <>Are you sure you want to log out?</>,
+      onOk: () => dispatch(logout()),
+    });
+  };
 
   return (
     <Layout
@@ -126,6 +148,7 @@ const MainLayout = () => {
           boxShadow: "2px 0 8px rgba(0,0,0,0.15)",
         }}
       >
+        {/* App Title */}
         <motion.div
           whileHover={{ scale: 1.05 }}
           style={{
@@ -149,18 +172,21 @@ const MainLayout = () => {
             {!collapsed ? APP_TITLE : APP_TITLE_SHORT}
           </Title>
         </motion.div>
+
+        {/* Main Navigation Menu */}
         <Menu
           className="sidebar-menu"
-          theme="dark"
+          theme={theme === "light" ? "light" : "dark"}
           mode="inline"
           selectedKeys={[selectedKey]}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
         />
 
-        {/* Logout */}
+        {/* Logout Option */}
         <Menu
-          theme="dark"
+          className="sidebar-menu"
+          theme={theme === "light" ? "light" : "dark"}
           mode="inline"
           selectable={false}
         >
@@ -168,10 +194,7 @@ const MainLayout = () => {
             key="logout"
             icon={<LogoutOutlined style={{ fontSize: "20px" }} />}
             onClick={showLogoutConfirm}
-          // style={{
-          //   color: theme === "light" ? "#ffffff" : "#ffffff",
-          //   fontWeight: "500",
-          // }}
+            className="ant-menu-item"
           >
             {t("logout")}
           </Menu.Item>
@@ -184,7 +207,7 @@ const MainLayout = () => {
           transition: "all 0.3s ease",
         }}
       >
-        {/* Header Component */}
+        {/* Header */}
         <Header
           style={{
             padding: "0 24px",
@@ -206,21 +229,7 @@ const MainLayout = () => {
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {/* <GlobalOutlined style={{ fontSize: 18 }} /> */}
-            {/* <Select
-              defaultValue={currentLanguage}
-              style={{ width: 140 }}
-              bordered={false}
-              onChange={handleLanguageChange}
-            >
-              {languages.map((lang) => (
-                <Option key={lang} value={lang}>
-                  {lang}
-                </Option>
-              ))}
-            </Select> */}
             <LanguageSelector />
-
             <Switch
               checkedChildren={<SunOutlined />}
               unCheckedChildren={<MoonOutlined />}
@@ -230,11 +239,11 @@ const MainLayout = () => {
           </div>
         </Header>
 
+        {/* Main Content */}
         <Content
           style={{
-            margin: "30px 24px",
-            // padding: 32,
             minHeight: 400,
+            padding: "16px 24px",
             fontSize: "17px",
           }}
         >
@@ -246,7 +255,6 @@ const MainLayout = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
             >
-              {/* All the content goes here */}
               <Outlet />
             </motion.div>
           </AnimatePresence>

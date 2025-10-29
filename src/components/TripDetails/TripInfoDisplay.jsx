@@ -8,7 +8,7 @@ const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
 
 const activityOptions = ["Adventure", "Heritage", "Nightlife", "Relaxation", "Nature", "Culture"];
-const travelModeOptions = ["Bike", "Car", "Flight", "Train", "Train&Road", "Flight&Road", "Custom"];
+// const travelModeOptions = ["Bike", "Car", "Flight", "Train", "Train&Road", "Flight&Road", "Custom"];
 const travellingWithOptions = ["Solo", "Partner", "Friends", "Family"];
 
 const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -83,11 +83,6 @@ const TripInfoDisplay = ({ trip }) => {
                     </Row>
                     <Row gutter={16}>
                         <Col span={12}>
-                            <Form.Item name="travel_mode" label="Travel Mode">
-                                <Select options={travelModeOptions.map(o => ({ label: o, value: o }))} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
                             <Form.Item name="travelling_with" label="Travelling With">
                                 <Select options={travellingWithOptions.map(o => ({ label: o, value: o }))} />
                             </Form.Item>
@@ -112,10 +107,11 @@ const TripInfoDisplay = ({ trip }) => {
                 <Descriptions.Item label={<><EnvironmentOutlined /> Base Location</>}><Text>{trip.base_location}</Text></Descriptions.Item>
                 <Descriptions.Item label={<><CalendarOutlined /> Dates</>}><Tag color="blue">{formatDate(trip.start_date)}</Tag> to <Tag color="blue">{formatDate(trip.end_date)}</Tag></Descriptions.Item>
                 <Descriptions.Item label={<><DollarOutlined /> Budget</>}><Text>₹{trip.budget.toLocaleString('en-IN')}</Text></Descriptions.Item>
-                <Descriptions.Item label={<><CarOutlined /> Travel Mode</>}><Tag>{trip.travel_mode}</Tag></Descriptions.Item>
                 <Descriptions.Item label={<><UserOutlined /> People</>}><Text>{trip.num_people}</Text></Descriptions.Item>
                 <Descriptions.Item label={<><SmileOutlined /> Travelling With</>}><Tag color="gold">{trip.travelling_with}</Tag></Descriptions.Item>
                 <Descriptions.Item label={<><TagsOutlined /> Activities</>}><Space wrap>{trip.activities.map(act => <Tag key={act} color="purple">{act}</Tag>)}</Space></Descriptions.Item>
+                {/* <Descriptions.Item label={<><TagsOutlined /> Destination info</>}><Text>{trip.base_location}</Text></Descriptions.Item> */}
+
             </Descriptions>
             <Button
                 icon={<EditOutlined />}

@@ -14,7 +14,7 @@ const initialState = {
 const authSlice = createSlice({
     name: 'auth',
     initialState,
-    
+
     // The logout action resets the entire state to its initial values.
     reducers: {
         logout: (state) => {
@@ -37,7 +37,7 @@ const authSlice = createSlice({
             })
             .addMatcher(authApi.endpoints.loginWithGoogle.matchFulfilled, (state, { payload }) => {
                 const { access_token, refresh_token, user } = payload;
-                
+
                 state.accessToken = access_token;
                 state.refreshToken = refresh_token;
                 state.user = user;
@@ -55,7 +55,26 @@ const authSlice = createSlice({
             .addMatcher(userApi.endpoints.getUserInfo.matchFulfilled, (state, { payload }) => {
                 state.user = payload;
                 state.isAuthenticated = true; // Mark as authenticated if user info is successfully fetched
-            });
+            })
+            //login by username password
+            .addMatcher(authApi.endpoints.loginUser.matchPending, (state) => {
+                state.isLoading = true;
+            })
+            .addMatcher(authApi.endpoints.loginUser.matchFulfilled, (state, { payload }) => {
+                if (payload?.status && payload?.data?.access_token) {
+                    state.accessToken = payload.data.access_token;
+                    state.refreshToken = payload.data.refresh_token;
+                    state.isAuthenticated = true;
+                } else {
+                    state.isAuthenticated = false;
+                }
+                state.isLoading = false;
+            })
+            .addMatcher(authApi.endpoints.loginUser.matchRejected, (state) => {
+                state.isLoading = false;
+                state.isAuthenticated = false;
+            })
+
     },
 });
 

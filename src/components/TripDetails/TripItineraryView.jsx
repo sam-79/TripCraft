@@ -1,12 +1,12 @@
 import React from 'react';
 import { Timeline, Typography, Card, Tag, Space, Divider } from 'antd';
-import { CarOutlined, CoffeeOutlined, CameraOutlined } from '@ant-design/icons';
+import { CarOutlined, CoffeeOutlined, PlusOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph, Text } = Typography;
 
 const ItineraryIcon = ({ place }) => {
     // In a real app, you could have different icons based on place type
-    return <CameraOutlined />;
+    return <PlusOutlined />;
 };
 
 const TripItineraryView = ({ itinerary }) => {
@@ -35,7 +35,7 @@ const TripItineraryView = ({ itinerary }) => {
                         <Timeline>
                             {day.places.map(place => (
                                 <Timeline.Item key={place.id} dot={<ItineraryIcon place={place} />}>
-                                    <strong>{place.best_time_to_visit}:</strong> {place.name}
+                                    <strong>{place.name}:</strong> {place.best_time_to_visit}
                                 </Timeline.Item>
                             ))}
                         </Timeline>
