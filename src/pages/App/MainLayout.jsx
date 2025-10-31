@@ -53,7 +53,7 @@ const MainLayout = () => {
       //   label: t("dashboard"),
       // },
       {
-        key: "/user/explore",
+        key: "/user",
         icon: <CompassOutlined style={{ fontSize: "22px" }} />,
         label: t("explore"),
       },

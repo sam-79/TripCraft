@@ -33,16 +33,12 @@ const router = createBrowserRouter([
             Component: MainLayout,
             children: [
                 {
-                    index: true,
-                    Component: Dashboard
+                    index:true,
+                    Component: Explore
                 },
                 {
                     path: "/user/newtrip",
                     Component: NewTrip
-                },
-                {
-                    path: "/user/explore",
-                    Component: Explore
                 },
                 {
                     path: "/user/trips",
