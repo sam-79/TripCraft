@@ -10,7 +10,7 @@ import TripsDetails from "../pages/App/TripsDetails";
 import Preferences from "../pages/App/Preferences";
 import Profile from "../pages/App/Profile";
 import NotFound from "../pages/NotFound";
-import Dashboard from "../pages/App/Dashboard";
+// import Dashboard from "../pages/App/Dashboard";
 import TripBooking from "../pages/App/BookingRecommendations";
 import ExploreBookings from "../pages/App/ExploreBookings";
 import PaymentHistory from "../pages/App/PaymentHistory";
