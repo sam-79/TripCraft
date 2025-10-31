@@ -47,20 +47,20 @@ const MainLayout = () => {
   // --- Define Sidebar Menu ---
   const menuItems = useMemo(
     () => [
+      // {
+      //   key: "/user",
+      //   icon: <DashboardOutlined style={{ fontSize: "22px" }} />,
+      //   label: t("dashboard"),
+      // },
       {
-        key: "/user",
-        icon: <DashboardOutlined style={{ fontSize: "22px" }} />,
-        label: t("dashboard"),
+        key: "/user/explore",
+        icon: <CompassOutlined style={{ fontSize: "22px" }} />,
+        label: t("explore"),
       },
       {
         key: "/user/newtrip",
         icon: <PlusCircleOutlined style={{ fontSize: "22px" }} />,
         label: t("new_trip"),
-      },
-      {
-        key: "/user/explore",
-        icon: <CompassOutlined style={{ fontSize: "22px" }} />,
-        label: t("explore"),
       },
       {
         key: "/user/trips",

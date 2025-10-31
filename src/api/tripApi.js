@@ -83,6 +83,11 @@ export const tripApi = createApi({
             providesTags: (result, error, tripId) => [{ type: 'Trip', id: tripId }],
             transformResponse: (response) => response.data,
         }),
+        getItinerary: builder.query({
+            query: (tripId) => `/trips/share/${tripId}`,
+            // No tags needed as this is a one-off lazy query for downloading
+            // and we don't need it to auto-refetch or cache aggressively.
+        }),
     }),
 });
 
@@ -96,5 +101,6 @@ export const {
     useDeleteTripMutation,
     useGenerateTravelModeMutation,
     useGetWeatherConditionsQuery,
+    useLazyGetItineraryQuery
 } = tripApi;
 

@@ -33,11 +33,11 @@ const TripsDetails = () => {
         refetchOnMountOrArgChange: true,
     });
     // Weather data query - only runs when we have a tripId
-    
+
     const { data: weatherData, error: weatherError, isLoading: isLoadingWeather } = useGetWeatherConditionsQuery(tripId, {
         skip: !tripId,
     });
-    
+
     const [deleteTripPlace, { isLoading: isDeletingPlace }] = useDeleteTripPlaceMutation();
     const [generateItinerary, { isLoading: isGeneratingItinerary }] = useGenerateItineraryMutation();
     // const [generatetravelMode, { isLoading: isTravelModeLoading }] = useGenerateTravelModeMutation();
@@ -123,20 +123,22 @@ const TripsDetails = () => {
                                 //     ), value: 'travel', disabled: !travelOptsReady
                                 // },
 
+
+                                {
+                                    label: (
+                                        <Tooltip title={itineraryReady ? null : <><Spin size='small' style={{
+                                            'colorPrimary': 'white',
+                                        }} /> Crafting your trip</>}>
+                                            Itinerary
+                                        </Tooltip>
+                                    ), value: 'itinerary', disabled: !itineraryReady
+                                },
                                 {
                                     label: (
                                         <Tooltip title={weatherReady ? null : 'Fetching weather info'}>
                                             Weather & Alerts
                                         </Tooltip>
                                     ), value: 'weather', disabled: !weatherReady
-                                },
-
-                                {
-                                    label: (
-                                        <Tooltip title={itineraryReady ? null : 'Crafting your trip'}>
-                                            Itinerary
-                                        </Tooltip>
-                                    ), value: 'itinerary', disabled: !itineraryReady
                                 },
                                 // {
                                 //     label: (
@@ -226,13 +228,13 @@ const TripsDetails = () => {
                                     : <>
                                         <TripItineraryView itinerary={trip.itineraries} onPlaceClick={setHighlightedPlaceId} />
                                         <Button
-                                       type="primary"
-                                       block
-                                       style={{marginTop: 24}}
-                                       onClick={() => navigate(`/user/trips/${tripId}/booking`)} // Navigate to the new booking page
-                                   >
-                                       Proceed to Booking Options and Recommendations
-                                   </Button>
+                                            type="primary"
+                                            block
+                                            style={{ marginTop: 24 }}
+                                            onClick={() => navigate(`/user/trips/${tripId}/booking`)} // Navigate to the new booking page
+                                        >
+                                            Proceed to Booking Options and Recommendations
+                                        </Button>
                                     </>
                             )}
 

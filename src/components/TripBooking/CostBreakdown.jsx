@@ -25,7 +25,7 @@ const CostBreakdown = ({ tripId, onComplete, setStatus }) => {
     // Fetch the cost breakdown data
     const { data: costData, error, isLoading, isFetching } = useGetCostBreakdownQuery(tripId, {
         pollingInterval: 5000, // Poll if breakdown is generated asynchronously
-        refetchOnMountOrArgChange: true,
+        refetchOnMountOrArgChange: false,
     });
 
     useEffect(() => {

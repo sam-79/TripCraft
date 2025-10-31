@@ -16,7 +16,7 @@ import {
     Alert,
     Rate,
     Popover,
-    Modal ,
+    Modal,
 } from 'antd';
 import {
     SearchOutlined,
@@ -87,7 +87,8 @@ const BusSearchForm = ({ onSearch, searchParams, setSearchParams, fetchSuggestio
             value: `${city.name} (${city.state})`, // Text in input on select
             label: (
                 <div>
-                    <Text strong>{city.name}</Text> ({city.state})
+                    <Text strong>{city.name}</Text> {"\n"}
+                    <Text>{city.state}</Text>
                 </div>
             ),
             id: city.id,
@@ -191,7 +192,7 @@ const AmenityIcon = ({ name }) => {
 };
 
 // --- Result Card (Updated for Bus Data) ---
-const BusResultCard = ({ data, showModal, selectedTripId }) => {
+const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [bookingData, setBookingData] = useState(null);
@@ -210,7 +211,7 @@ const BusResultCard = ({ data, showModal, selectedTripId }) => {
         }
         try {
             const res = await createBusBooking({
-                ...data, ...{ trip_id: selectedTripId, booking_type: "Bus" }
+                ...{ trip_id: selectedTripId, booking_type: "Bus", ...userData, }
             }).unwrap();
             if (res.status) {
                 setBookingData(res.data);
@@ -228,9 +229,8 @@ const BusResultCard = ({ data, showModal, selectedTripId }) => {
         try {
             const res = await createCheckoutSession({
                 booking_id: bookingData?.booking_id,
-                amount: finalPrice,
-                hotel_name: bookingData?.hotel_name,
-                booking_type: "Hotel",
+                amount: data?.amount,
+                booking_type: "Bus",
                 trip_id: selectedTripId
             }).unwrap();
 
@@ -358,7 +358,13 @@ const BusResultCard = ({ data, showModal, selectedTripId }) => {
             >
                 {bookingData ? (
                     <>
-                        
+                    {console.log(data)}
+                        <Paragraph><strong>From : {userData?.from_city}</strong></Paragraph>
+                        <Paragraph><strong>To : {userData?.to_city}</strong></Paragraph>
+                        <Paragraph><strong>Journey Data : {bookingData?.journey_date}</strong></Paragraph>
+                        <Paragraph><strong>Travels : {data?.Travels}</strong></Paragraph>
+                        <Paragraph><strong>Bus type : {data?.bus_type}</strong></Paragraph>
+                        <Paragraph><strong>Amount : {data?.amount}</strong></Paragraph>
                     </>
                 ) : (
                     <Paragraph>Loading booking details...</Paragraph>
@@ -486,7 +492,7 @@ const BusBooking = ({ showModal, selectedTripId }) => {
                     </Col>
                 </Row>
                 <AnimatePresence>
-                    {AvailableTrips.map((item, index) => <BusResultCard key={`${item.id}_${index}`} data={item} showModal={showModal} selectedTripId={selectedTripId} />)}
+                    {AvailableTrips.map((item, index) => <BusResultCard key={`${item.id}_${index}`} data={item} showModal={showModal} selectedTripId={selectedTripId} userData={busResults.user_data} />)}
                 </AnimatePresence>
             </div>
         );

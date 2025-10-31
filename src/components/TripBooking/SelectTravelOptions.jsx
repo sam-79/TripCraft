@@ -23,8 +23,8 @@ const SelectTravelOptions = ({ tripId, onComplete, setStatus }) => {
 
     // 1. Fetch existing travel options (with polling if generation is in progress)
     const { data: travelData, error: fetchError, isLoading: isLoadingFetch, refetch: refetchTravelOptions } = useGetTravelOptionsQuery(tripId, {
-        // pollingInterval: 5000, // Poll every 5 seconds while waiting for generation
-        // refetchOnMountOrArgChange: true,
+        pollingInterval: 5000, // Poll every 5 seconds while waiting for generation
+        refetchOnMountOrArgChange: true,
     });
 
     // 2. Mutation hook to generate options

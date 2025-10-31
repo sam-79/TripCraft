@@ -231,11 +231,17 @@ const TrainAnalysisSection = ({ analysis, bookingList, onAddToBooking }) => {
                 {Object.entries(recommendations).map(([key, rec]) => (
                     <Col xs={24} sm={12} md={8} key={key}>
                         <Card title={key.replace(/_/g, " ").toUpperCase()} size="small">
-                            <Text strong>{rec.train_name} ({rec.train_number})</Text><br />
-                            {rec.class && <Tag>{rec.class}</Tag>}
-                            {rec.fare && <Text> Fare: {formatCurrency(rec.fare)}</Text>}<br />
-                            <Text>Duration: {rec.duration}</Text><br />
-                            {rec.total_available_seats && <Text>Available Seats: {rec.total_available_seats}</Text>}
+                            {rec ? (
+                                <>
+                                    <Text strong>{rec.train_name} ({rec.train_number})</Text><br />
+                                    {rec.class && <Tag>{rec.class}</Tag>}
+                                    {rec.fare && <Text> Fare: {formatCurrency(rec.fare)}</Text>}<br />
+                                    <Text>Duration: {rec.duration}</Text><br />
+                                    {rec.total_available_seats && <Text>Available Seats: {rec.total_available_seats}</Text>}
+                                </>
+                            ) : (
+                                <Text type="secondary">No specific recommendation available.</Text>
+                            )}
                         </Card>
                     </Col>
                 ))}

@@ -185,7 +185,7 @@ const TripWeatherView = ({ weatherData }) => {
       // loading={isGeneratingItinerary}
       >
         <Tooltip title={'Update iternerary with weather data'}>
-          Update Itinerary
+          Sync Iternerary based on Weather Conditions
         </Tooltip>
       </Button>
     </div>

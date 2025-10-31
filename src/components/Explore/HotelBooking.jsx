@@ -245,7 +245,7 @@ const HotelAmenityIcon = ({ name }) => {
 // };
 
 // --- Main HotelBooking Component ---
-const HotelBooking = ({ showModal,selectedTripId }) => {
+const HotelBooking = ({ selectedTripId, showModal }) => {
     // --- State for Search ---
     const [searchParams, setSearchParams] = useState({
         destination: '',
@@ -279,7 +279,7 @@ const HotelBooking = ({ showModal,selectedTripId }) => {
             check_out: dateRange[1].format('DD-MM-YYYY'),
             no_of_rooms: rooms,
             no_of_adult: guests,
-            no_of_child: 0, 
+            no_of_child: 0,
             no_of_results: 20 // Fetch more results
         };
 
@@ -287,7 +287,7 @@ const HotelBooking = ({ showModal,selectedTripId }) => {
     };
 
     // --- Render Results ---
-    const renderResults = () => {
+    const RenderResults = ({selectedTripId}) => {
         if (isSearchLoading) {
             return (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
@@ -348,7 +348,8 @@ const HotelBooking = ({ showModal,selectedTripId }) => {
                 searchParams={searchParams}
                 setSearchParams={setSearchParams}
             />
-            {renderResults()}
+            {/* {renderResults()} */}
+            <RenderResults selectedTripId={selectedTripId} />
         </motion.div>
     );
 };

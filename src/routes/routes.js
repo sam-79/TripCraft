@@ -15,6 +15,7 @@ import TripBooking from "../pages/App/BookingRecommendations";
 import ExploreBookings from "../pages/App/ExploreBookings";
 import PaymentHistory from "../pages/App/PaymentHistory";
 import AllBookings from "../pages/App/AllBookings";
+import TripItineraryPage from "../pages/App/TripItineraryPage";
 
 const router = createBrowserRouter([
     {
@@ -51,7 +52,7 @@ const router = createBrowserRouter([
                 {
                     path: "/user/trips/:tripId",
                     Component: TripsDetails
-                },{
+                }, {
                     path: "/user/trips/:tripId/booking",
                     Component: TripBooking
                 },
@@ -68,15 +69,19 @@ const router = createBrowserRouter([
                     Component: ExploreBookings
                 },
                 {
-                    path:"/user/bookings/my-bookings/:tabKey?",
+                    path: "/user/bookings/my-bookings/:tabKey?",
                     Component: AllBookings
                 },
                 {
-                    path:"/user/bookings/payments",
+                    path: "/user/bookings/payments",
                     Component: PaymentHistory
-                }
+                },
             ]
         }]
+    },
+    {
+        path: "/user/test",
+        Component: TripItineraryPage
     },
     {
         path: "*",

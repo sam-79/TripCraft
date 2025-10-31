@@ -4,6 +4,7 @@ import { ClockCircleOutlined, DollarCircleOutlined, CheckCircleOutlined, Warning
 import { motion } from 'framer-motion';
 import TrainAnalysisSection from './TrainAnalysisSection';
 import BusAnalysisSection from './BusAnalysisSection';
+import CabAnalysisSection from './CabAnalysisSection'; // Import the new component
 
 const { Title, Text, Link } = Typography;
 
@@ -23,6 +24,45 @@ const getTrainAvailabilityTag = (status) => {
 // Main component to render details for a specific leg
 const LegAnalysisDetails = ({ leg, bookingList, onAddToBooking }) => {
     const [messageApi, messageApiContextHolder] = message.useMessage();
+
+    // Determine which analysis component to show
+    const renderAnalysisComponent = () => {
+        if (leg.mode?.toLowerCase() === 'train' && leg.train_data_analysis) {
+            return (
+                <TrainAnalysisSection
+                    analysis={leg.train_data_analysis}
+                    bookingList={bookingList}
+                    onAddToBooking={onAddToBooking}
+                />
+            );
+        }
+
+        if (leg.mode?.toLowerCase() === 'bus' && leg.bus_data_analysis) {
+            return (
+                <BusAnalysisSection
+                    analysis={leg.bus_data_analysis}
+                    bookingList={bookingList}
+                    onAddToBooking={onAddToBooking}
+                />
+            );
+        }
+
+        if (leg.mode?.toLowerCase() === 'cab') {
+            return (
+                <CabAnalysisSection
+                    leg={leg} // Pass the whole leg
+                    bookingList={bookingList}
+                    onAddToBooking={onAddToBooking}
+                />
+            );
+        }
+
+        // Add condition for flight_data_analysis here if needed
+
+        // Fallback for no detailed analysis
+        return <Empty description="Detailed analysis for this leg is not available." />;
+    };
+
     return (
         <div>
             {messageApiContextHolder}
@@ -30,40 +70,22 @@ const LegAnalysisDetails = ({ leg, bookingList, onAddToBooking }) => {
                 {leg.mode} Analysis: {leg.from} ({leg.from_code || 'N/A'}) <ArrowRightOutlined /> {leg.to} ({leg.to_code || 'N/A'})
             </Title>
 
-            {/* Pass the required props to TrainAnalysisSection */}
-            {leg.train_data_analysis && (
-                <TrainAnalysisSection
-                    analysis={leg.train_data_analysis}
-                    bookingList={bookingList}
-                    onAddToBooking={onAddToBooking}
-                />
-            )}
+            {renderAnalysisComponent()}
 
-            {leg.bus_data_analysis && (
-                <BusAnalysisSection
-                    analysis={leg.bus_data_analysis}
-                    bookingList={bookingList}
-                    onAddToBooking={onAddToBooking}
-                />
+            {/* Booking Button - Hide for cabs or if no booking URL */}
+            {leg.mode?.toLowerCase() !== 'cab' && leg.booking_url && (
+                <Button
+                    type="link"
+                    href={leg.booking_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginTop: 16 }}
+                >
+                    <Tooltip title={"Book with EaseMyTrip"}>
+                        View on EaseMyTrip
+                    </Tooltip>
+                </Button>
             )}
-            {/* Add condition for flight_data_analysis */}
-
-            {!leg.train_data_analysis && !leg.bus_data_analysis && (
-                <Empty description="Detailed analysis for this leg is not available." />
-            )}
-
-            {/* Booking Button - Consider placing this more strategically */}
-            <Button
-                type="link"
-                href={leg.booking_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ marginTop: 16 }}
-            >
-                <Tooltip title={"Book with EaseMyTrip"}>
-                    View on EaseMyTrip
-                </Tooltip>
-            </Button>
         </div>
     );
 };
