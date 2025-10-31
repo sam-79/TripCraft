@@ -15,7 +15,6 @@ import TripBooking from "../pages/App/BookingRecommendations";
 import ExploreBookings from "../pages/App/ExploreBookings";
 import PaymentHistory from "../pages/App/PaymentHistory";
 import AllBookings from "../pages/App/AllBookings";
-import TripItineraryPage from "../pages/App/TripItineraryPage";
 
 const router = createBrowserRouter([
     {
@@ -78,10 +77,6 @@ const router = createBrowserRouter([
                 },
             ]
         }]
-    },
-    {
-        path: "/user/test",
-        Component: TripItineraryPage
     },
     {
         path: "*",
