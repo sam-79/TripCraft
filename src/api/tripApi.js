@@ -46,7 +46,7 @@ export const tripApi = createApi({
             invalidatesTags: (result, error, { tripId }) => [{ type: 'Trip', id: tripId }],
             transformResponse: (response) => response.data,
         }),
-        // --- NEW: Endpoint to delete a specific tourist place from a trip ---
+        // --- Endpoint to delete a specific tourist place from a trip ---
         deleteTripPlace: builder.mutation({
             query: (placeId) => ({
                 url: `/trips/place/${placeId}`,
@@ -77,6 +77,17 @@ export const tripApi = createApi({
             }),
             transformResponse: (response) => response.data,
         }),
+        getWeatherConditions: builder.query({
+            query: (tripId) => `/trips/weather_conditions/${tripId}`,
+            // We can tag this with the specific trip ID so it could be refetched if needed
+            providesTags: (result, error, tripId) => [{ type: 'Trip', id: tripId }],
+            transformResponse: (response) => response.data,
+        }),
+        getItinerary: builder.query({
+            query: (tripId) => `/trips/share/${tripId}`,
+            // No tags needed as this is a one-off lazy query for downloading
+            // and we don't need it to auto-refetch or cache aggressively.
+        }),
     }),
 });
 
@@ -88,6 +99,8 @@ export const {
     useDeleteTripPlaceMutation,
     useGenerateItineraryMutation,
     useDeleteTripMutation,
-    useGenerateTravelModeMutation
+    useGenerateTravelModeMutation,
+    useGetWeatherConditionsQuery,
+    useLazyGetItineraryQuery
 } = tripApi;
 

@@ -6,7 +6,7 @@ const NotFound = () => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    navigate('/dashboard'); // Navigate to the main dashboard
+    navigate('/user'); // Navigate to the main dashboard
   };
 
   const handleGoBack = () => {

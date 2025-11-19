@@ -1,0 +1,207 @@
+.itinerary-wrapper {
+    background: linear-gradient(135deg, #f9fafc 0%, #eef2f7 100%);
+    min-height: 100vh;
+    padding: 30px;
+    font-family: "Poppins", sans-serif;
+}
+
+.print-btn {
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto 20px;
+    transition: 0.3s ease;
+}
+
+.print-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.itinerary-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    padding: 30px 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Header */
+.itinerary-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.itinerary-header h1 {
+    font-size: 2.4rem;
+    color: #4f46e5;
+    margin-bottom: 8px;
+}
+
+.destination {
+    font-size: 1.2rem;
+    color: #374151;
+}
+
+.dates {
+    color: #6b7280;
+}
+
+/* Destination section */
+.destination-section {
+    margin: 30px 0;
+}
+
+.destination-images {
+    display: flex;
+    gap: 10px;
+}
+
+.destination-images img {
+    width: 33%;
+    border-radius: 10px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.destination-details {
+    margin-top: 15px;
+}
+
+/* Daily itinerary */
+.daily-section {
+    border-top: 2px solid #e5e7eb;
+    padding-top: 20px;
+}
+
+.day-card {
+    background: #f9fafb;
+    border-radius: 10px;
+    margin: 20px 0;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.day-header h3 {
+    color: #4f46e5;
+}
+
+.tips {
+    font-style: italic;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+
+.day-lists {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.day-lists ul {
+    padding-left: 20px;
+    color: #374151;
+}
+
+.places-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 10px;
+}
+
+.place-card {
+    background: white;
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.place-card h5 {
+    color: #4338ca;
+    margin-bottom: 5px;
+}
+
+.best-time {
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+/* Cost section */
+.cost-section {
+    margin-top: 40px;
+}
+
+.cost-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.cost-table th {
+    background: #4f46e5;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.cost-table td {
+    padding: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.cost-summary {
+    text-align: right;
+    font-weight: bold;
+}
+
+.negative {
+    color: #dc2626;
+}
+
+.positive {
+    color: #16a34a;
+}
+
+/* Travel updates */
+.travel-update {
+    background: #eef2ff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 40px;
+}
+
+.travel-update ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+/* Footer */
+.itinerary-footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+/* Print styling */
+@media print {
+    body {
+        background: white;
+    }
+
+    .print-btn {
+        display: none;
+    }
+
+    .itinerary-container {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+    }
+}

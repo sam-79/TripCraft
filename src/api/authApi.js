@@ -4,13 +4,7 @@ export const authApi = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_BACKEND_SERVER_HOST_URL}`,
-        prepareHeaders: (headers, { getState }) => {
-            const token = getState().auth.accessToken;
-            if (token) {
-                headers.set('Authorization', `Bearer ${token}`);
-            }
-            return headers;
-        },
+
     }),
     endpoints: (builder) => ({
         loginWithGoogle: builder.mutation({
@@ -21,8 +15,41 @@ export const authApi = createApi({
             }),
             transformResponse: (response) => response.data,
         }),
+        createUser: builder.mutation({
+            query: ({ username, password }) => ({
+                url: '/auth/create-user',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            }),
+            transformResponse: (response) => response,
+        }),
+
+        // --- User Login (username + password) ---
+        loginUser: builder.mutation({
+            query: ({ username, password }) => ({
+                url: '/auth/token',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    grant_type: 'password',
+                    username,
+                    password,
+                }),
+            }),
+            transformResponse: (response) => response,
+        }),
     }),
+
 });
 
-export const { useLoginWithGoogleMutation } = authApi;
+export const {
+    useLoginWithGoogleMutation,
+    useCreateUserMutation,
+    useLoginUserMutation
+} = authApi;
 

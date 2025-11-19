@@ -7,7 +7,9 @@ import MapView from "../../components/newtrip/MapView";
 // Import the necessary hooks from your API slices
 import { useGetUserPreferencesQuery } from "../../api/userApi";
 import { useAddTripMutation } from "../../api/tripApi";
+import Lottie from 'lottie-react';
 import LoadingAnimationOverlay from "../../components/LoadingAnimation";
+import traveltheglobe from "../../assets/globe.json"
 
 const NewTrip = () => {
   const navigate = useNavigate();
@@ -46,31 +48,50 @@ const NewTrip = () => {
   }
 
   return (
-    <Row gutter={16} style={{ height: "100%", minHeight: "85vh" }}>
+    // <Row gutter={16} style={{ height: "100%", minHeight: "85vh" }}>
+    <>
       {messageApiContextHolder}
-      <Col xs={24} md={14} >
+      <div >
         <Card style={{ borderRadius: 16, height: "100%", overflowY: 'auto' }}>
-          {
-            isLoadingPreferences ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }} >
-                {/* <Spin tip="Loading your preferences..." size="large" /> */}
-                <LoadingAnimationOverlay text={"Loading your preferences..."} />
-              </div>
-            ) : (
-              <TripForm
-                onSubmit={handleFormSubmit}
-                defaultPreferences={preferences.data}
-                isAddingTrip={isAddingTrip}
-              />
-            )}
+          {isLoadingPreferences ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <LoadingAnimationOverlay text={"Loading your preferences..."} />
+            </div>
+          ) : (
+            <TripForm
+              onSubmit={handleFormSubmit}
+              defaultPreferences={preferences.data}
+              isAddingTrip={isAddingTrip}
+            />
+          )}
         </Card>
-      </Col>
-      < Col xs={24} md={10} >
-        <Card style={{ borderRadius: 16, height: "100%", overflow: "hidden" }}>
-          <MapView />
-        </Card>
-      </Col>
-    </Row>
+      </div>
+
+      {/* <Col
+        xs={24}
+        md={10}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end", // push content to bottom
+          alignItems: "center",
+          height: "100%",
+          padding: 0, // remove padding if any
+          }}
+      >
+      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+      <Lottie
+      animationData={traveltheglobe}
+      style={{
+        width: "70%",
+        maxHeight: "100%", // ensure it doesn't overflow
+        }}
+        />
+        </div>
+      </Col> */}
+      {/* </Row> */}
+
+    </>
   );
 };
 
