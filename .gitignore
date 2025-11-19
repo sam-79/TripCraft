@@ -23,3 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 auth.py
+src/pages/App/tripData.json
+src/components/TripDetails/Untitled-2.json
+tripplannar-code.zip
+tripdetail.json
+test.py
+src.zip
+src-tripplanner.zip
+api-docs.txt
+src/pages/App/TripItineraryPage.jsx

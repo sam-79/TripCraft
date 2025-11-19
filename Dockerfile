@@ -52,6 +52,13 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
+    location /locales/ {
+        root /usr/share/nginx/html;
+        try_files $uri =404;
+        add_header Cache-Control "no-cache";
+    }
+
+
     # Basic security headers
     add_header X-Content-Type-Options nosniff;
     add_header X-Frame-Options SAMEORIGIN;
