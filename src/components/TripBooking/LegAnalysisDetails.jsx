@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography, Row, Col, Statistic, Table, Tag, Button, Empty, Space, Card, Tooltip, message } from 'antd';
-import { ClockCircleOutlined, DollarCircleOutlined, CheckCircleOutlined, WarningOutlined, CarOutlined, StarFilled, ArrowRightOutlined } from '@ant-design/icons';
+import { Typography, Row, Col, Tag, Button, Empty, Space, message, Alert  } from 'antd';
+import { ArrowRightOutlined, LinkOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import TrainAnalysisSection from './TrainAnalysisSection';
 import BusAnalysisSection from './BusAnalysisSection';
@@ -73,19 +73,34 @@ const LegAnalysisDetails = ({ leg, bookingList, onAddToBooking }) => {
             {renderAnalysisComponent()}
 
             {/* Booking Button - Hide for cabs or if no booking URL */}
-            {leg.mode?.toLowerCase() !== 'cab' && leg.booking_url && (
-                <Button
-                    type="link"
-                    href={leg.booking_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ marginTop: 16 }}
-                >
-                    <Tooltip title={"Book with EaseMyTrip"}>
-                        View on EaseMyTrip
-                    </Tooltip>
-                </Button>
+            {(leg.mode?.toLowerCase() !== 'cab' && leg.booking_url) && (
+                <Alert
+                    message={
+                        <Row justify="space-between" align="middle" style={{ width: '100%' }}>
+                            <Col>
+                                <Space>
+                                    <SafetyCertificateOutlined style={{ color: '#52c41a' }} />
+                                    <Text strong>Ready to book?</Text>
+                                    <Text type="secondary">Complete your reservation securely on EaseMyTrip.</Text>
+                                </Space>
+                            </Col>
+                            <Col>
+                                <Button
+                                    type="primary"
+                                    icon={<LinkOutlined />}
+                                    onClick={() => window.open(leg.booking_url, '_blank')}
+                                    style={{ background: '#1890ff', borderColor: '#1890ff' }}
+                                >
+                                    Book on EaseMyTrip
+                                </Button>
+                            </Col>
+                        </Row>
+                    }
+                    type="info"
+                    style={{ marginBottom: 24, marginTop: 24, padding: '12px 24px', borderRadius: 8, border: '1px solid #91caff' }}
+                />
             )}
+
         </div>
     );
 };
