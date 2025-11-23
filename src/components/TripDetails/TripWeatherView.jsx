@@ -7,9 +7,7 @@ import {
   List,
   Alert,
   Card,
-  Divider,
-  Button, 
-  Tooltip
+  Divider
 } from "antd";
 import {
   ThunderboltOutlined,
@@ -176,18 +174,6 @@ const TripWeatherView = ({ weatherData }) => {
           )}
         </Card>
       </Space>
-
-      <Button
-        type="primary"
-        block
-        style={{ marginTop: 16 }}
-      // onClick={handleGenerateItinerary}
-      // loading={isGeneratingItinerary}
-      >
-        <Tooltip title={'Update iternerary with weather data'}>
-          Sync Iternerary based on Weather Conditions
-        </Tooltip>
-      </Button>
     </div>
   );
 };

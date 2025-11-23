@@ -139,7 +139,7 @@ const TripItineraryView = ({ itinerary }) => {
                     style={{
                       fontSize: 18,
                       color: "#1890ff",
-                    //   background: "#fff",
+                      //   background: "#fff",
                     }}
                   />
                 </motion.div>
@@ -217,6 +217,10 @@ const TripItineraryView = ({ itinerary }) => {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 6,
+                                whiteSpace: "normal",
+                                wordBreak: "break-word",
+                                maxWidth: "100%",
+                                lineHeight: "18px"
                               }}
                             >
                               <CoffeeOutlined /> {item}
@@ -248,6 +252,10 @@ const TripItineraryView = ({ itinerary }) => {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 6,
+                                whiteSpace: "normal",      // <— allows wrapping
+                                wordBreak: "break-word",   // <— long text won't overflow
+                                maxWidth: "100%",          // <— keeps tag inside the column
+                                lineHeight: "18px",
                               }}
                             >
                               <ReadOutlined /> {item}
@@ -320,7 +328,7 @@ const TripItineraryView = ({ itinerary }) => {
           ))}
         </Timeline>
       </motion.div>
-    </div>
+    </div >
   );
 };
 

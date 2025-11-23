@@ -26,22 +26,50 @@ const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
                 <Card
                     className="infowindow-card"
                     cover={
-                        <img
-                            alt={place.name}
-                            src={place.image_url}
-                            loading='lazy'
-                            className="infowindow-image"
-                            onError={(e) => (e.target.src = '/fallback-image.png')} // fallback image
-                            style={{ borderRadius: '8px 8px 0 0', objectFit: 'cover', height: 150 }}
-                        />
+                        <div style={{ position: 'relative' }}>
+                            {/* IMAGE */}
+                            <img
+                                alt={place.name}
+                                src={place.image_url}
+                                loading='lazy'
+                                className="infowindow-image"
+                                onError={(e) => {
+                                    e.target.onerror = null; // prevent infinite loop
+                                    e.target.style.display = 'none'; // hide broken image
+                                    const placeholder = e.target.parentNode.querySelector('.image-placeholder');
+                                    if (placeholder) placeholder.style.display = 'flex';
+                                }}
+                                style={{
+                                    borderRadius: '8px 8px 0 0',
+                                    objectFit: 'cover',
+                                    height: 150,
+                                    width: '100%',
+                                }}
+                            />
+
+                            {/* TEXTUAL PLACEHOLDER */}
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                height: 150,
+                                borderRadius: '8px 8px 0 0',
+                                background: '#f5f5f5'
+                            }}>
+                                <EnvironmentOutlined style={{ fontSize: 24, color: '#888' }} />
+                                <span style={{ marginTop: 4, color: '#666', fontWeight: 500 }}>No Image</span>
+                            </div>
+
+                        </div>
                     }
                     bordered={false}
                     style={{
                         maxWidth: 320,
                         borderRadius: 12,
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-                        backgroundColor: 'var(--infoWindow-bg, #fff)',
-                        color: 'var(--infoWindow-text, #000)',
+                        // boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                        // backgroundColor: 'var(--infoWindow-bg, #fff)',
+                        // color: 'var(--infoWindow-text, #000)',
                     }}
                 >
                     <Card.Meta
@@ -51,7 +79,7 @@ const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
                                     strong
                                     style={{
                                         fontSize: 16,
-                                        color: 'var(--infoWindow-primary, #1890ff)',
+                                        // color: 'var(--infoWindow-primary, #1890ff)',
                                         userSelect: 'none',
                                     }}
                                 >
@@ -61,7 +89,7 @@ const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
                                     level={5}
                                     style={{
                                         margin: 0,
-                                        color: 'var(--infoWindow-title, #111)',
+                                        // color: 'var(--infoWindow-title, #111)',
                                         fontWeight: 600,
                                         flex: 1,
                                         whiteSpace: 'nowrap',
@@ -78,7 +106,7 @@ const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
                         description={
                             <Text
                                 style={{
-                                    color: 'var(--infoWindow-desc, #444)',
+                                    // color: 'var(--infoWindow-desc, #444)',
                                     fontSize: 14,
                                     lineHeight: 1.4,
                                 }}

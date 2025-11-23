@@ -4,8 +4,8 @@ import { Card, Typography, Spin, Alert, Button, Row, Col, Segmented, List, Avata
 import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import dayjs from "dayjs";
-import { useGetTripByIdQuery, useDeleteTripPlaceMutation, useGenerateItineraryMutation, useGenerateTravelModeMutation, useGetWeatherConditionsQuery } from '../../api/tripApi';
-import { useGetBookingSuggestionsQuery } from '../../api/bookingApi';
+import { useGetTripByIdQuery, useDeleteTripPlaceMutation, useGenerateItineraryMutation, useGetWeatherConditionsQuery } from '../../api/tripApi';
+// import { useGetBookingSuggestionsQuery } from '../../api/bookingApi';
 import { startCase, toLower } from 'lodash';
 // Import the child components
 // import TripMapView from '../../components/TripDetails/TripMapView';
@@ -67,7 +67,7 @@ const TripsDetails = () => {
         try {
             generateItinerary(tripId).unwrap();
             // generatetravelMode(tripId).unwrap();
-            generateItineraryResp.status ? messageApi.loading({ content: generateItineraryResp.message, key: 'itinerary' }): messageApi.error(generateItineraryResp.message);
+            generateItineraryResp.status ? messageApi.loading({ content: generateItineraryResp.message, key: 'itinerary' }) : messageApi.error(generateItineraryResp.message);
             // Polling will automatically handle showing the result
         } catch (err) {
             messageApi.error({ content: 'Failed to start itinerary generation.', key: 'itinerary' });
@@ -215,10 +215,46 @@ const TripsDetails = () => {
 
                             {activeView === 'weather' && (
                                 isLoadingWeather
-                                    ? <div style={{ textAlign: 'center', padding: '50px' }}><Spin tip="Fetching live weather..." /></div>
+                                    ? <div style={{ textAlign: 'center', padding: '50px' }}>
+                                        {/* <Spin tip="Fetching live weather..." /> */}
+                                        <LoadingAnimationOverlay text={"Fetching live weather..."} />
+                                    </div>
                                     : weatherError
                                         ? <Alert message="Could not fetch weather data." type="error" />
-                                        : <TripWeatherView weatherData={weatherData} />
+                                        : <>
+                                            <div style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                height: '100%',
+                                            }}>
+                                                <div style={{
+                                                    flex: 1,
+                                                    overflowY: 'auto',
+                                                    paddingRight: 8 // optional scrollbar spacing
+                                                }}>
+                                                    <TripWeatherView weatherData={weatherData} />
+                                                </div>
+                                                <Tooltip
+                                                    title={
+                                                        isHistoricalTrip
+                                                            ? "This trip has already started or passed. Syncing is no longer available. If not, User can update dates in TripInfo "
+                                                            : "Update iternerary with weather data"
+                                                    }
+                                                >
+                                                    <Button
+                                                        type="primary"
+                                                        block
+                                                        style={{ marginTop: 16 }}
+                                                    // onClick={handleGenerateItinerary}
+                                                    // loading={isGeneratingItinerary}
+                                                    >
+                                                        Sync Iternerary based on Weather Conditions
+                                                    </Button>
+                                                </Tooltip>
+                                            </div>
+                                        </>
+
+
                             )}
 
                             {activeView === 'itinerary' && (
@@ -262,20 +298,10 @@ const TripsDetails = () => {
                                                     Proceed to Booking Options and Recommendations
                                                 </Button>
                                             </Tooltip>
-                                            </div>
-                                        </>
+                                        </div>
+                                    </>
                             )}
-
-                                        {
-                                            // activeView === 'booking' && (
-                                            //     isLoadingBooking
-                                            //         ? <div style={{ textAlign: 'center', padding: '50px' }}><Spin tip="Fetching booking options..." /></div>
-                                            //         : bookingError
-                                            //             ? <Alert message="Could not fetch booking options." type="error" />
-                                            //             : <TripBookingView bookingData={bookingData} />
-                                            // )
-                                        }
-                                    </div>
+                        </div>
                     </Col>
                     <Col xs={24} md={10} style={{ height: '100%' }}>
                         <TripGoogleMapView
