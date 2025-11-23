@@ -35,7 +35,6 @@ import {
 } from '@ant-design/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import dayjs from 'dayjs';
-
 // Import RTK Query hook
 import { useSearchHotelsMutation } from '../../api/searchApi.js';
 
@@ -130,119 +129,6 @@ const HotelAmenityIcon = ({ name }) => {
     );
 };
 
-// --- Result Card (Updated for Hotel Data) ---
-// const HotelResultCard = ({ data }) => {
-//     // Calculate final price including tax
-//     const finalPrice = data.prc + data.tax;
-//     // Tripadvisor rating if available, otherwise hotel rating
-//     const displayRating = data.tr ? parseFloat(data.tr) : parseFloat(data.rat);
-
-//     // Parse amenities string
-//     const amenities = data.hAmen ? data.hAmen.split(',') : [];
-
-//     // Parse highlights
-//     const highlights = data.highlt ? data.highlt.split('|').map(h => h.trim()) : [];
-
-//     const getRatingText = (rating) => {
-//         if (rating >= 4.5) return { text: "Exceptional", color: "purple" };
-//         if (rating >= 4.0) return { text: "Very Good", color: "success" };
-//         if (rating >= 3.5) return { text: "Good", color: "blue" };
-//         if (rating >= 3.0) return { text: "Average", color: "warning" };
-//         return { text: "Okay", color: "default" };
-//     };
-
-//     const ratingInfo = getRatingText(displayRating);
-
-//     return (
-//         <motion.div
-//             initial={{ opacity: 0, y: 20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             transition={{ duration: 0.3 }}
-//         >
-//             <Card
-//                 style={{ marginBottom: 16, borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
-//                 bodyStyle={{ padding: 0 }} // Remove default padding
-//             >
-//                 <Row gutter={0}>
-//                     {/* Image Column */}
-//                     <Col xs={24} sm={8} md={6}>
-//                         <Image
-//                             src={data.imgU || (data.imgarry && data.imgarry[0])} // Use main image or first from array
-//                             alt={data.nm}
-//                             style={{ height: '100%', width: '100%', objectFit: 'cover', borderTopLeftRadius: 12, borderBottomLeftRadius: 12 }}
-//                             fallback="https://placehold.co/300x250/EEE/CCC?text=No+Image"
-//                             preview={false} // Disable preview for cleaner look in list
-//                         />
-//                     </Col>
-
-//                     {/* Details Column */}
-//                     <Col xs={24} sm={16} md={18} style={{ padding: '16px 20px' }}>
-//                         <Row justify="space-between" align="top">
-//                             <Col flex="auto">
-//                                 <Title level={5} style={{ margin: 0 }}>{data.nm}</Title>
-//                                 <Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 8 }}>
-//                                     <EnvironmentOutlined /> {data.loc || data.adrs.split('>').pop()}
-//                                 </Paragraph>
-//                             </Col>
-//                             <Col style={{ textAlign: 'right' }}>
-//                                 {displayRating > 0 && (
-//                                     <Tag color={ratingInfo.color} style={{ marginBottom: 4 }}>
-//                                         {ratingInfo.text}
-//                                     </Tag>
-//                                 )}
-//                                 <br />
-//                                 <Rate disabled defaultValue={displayRating} allowHalf style={{ fontSize: 14 }} />
-//                                 {data.tCount && <Text type="secondary" style={{ fontSize: 12, marginLeft: 4 }}>({data.tCount} reviews)</Text>}
-//                             </Col>
-//                         </Row>
-
-
-//                         <Divider style={{ margin: '12px 0' }} />
-
-//                         <Paragraph style={{ fontSize: 12, marginBottom: 8 }}>
-//                             <Text strong>Key Amenities:</Text><br />
-//                             {amenities.slice(0, 4).map(amenity => ( // Show first 4
-//                                 <HotelAmenityIcon key={amenity} name={amenity} />
-//                             ))}
-//                         </Paragraph>
-
-//                         {highlights.length > 0 && (
-//                             <Paragraph style={{ fontSize: 12, marginBottom: 12 }}>
-//                                 {highlights.map(h => (
-//                                     <Tag key={h} color="geekblue" style={{ marginRight: 4, marginBottom: 4 }}>{h}</Tag>
-//                                 ))}
-//                             </Paragraph>
-//                         )}
-
-//                         <Row justify="space-between" align="bottom">
-//                             <Col>
-//                                 {data.plcy && (
-//                                     <Tag color={data.plcy.toLowerCase().includes('free') ? "green" : "orange"} icon={<InfoCircleOutlined />}>
-//                                         {data.plcy}
-//                                     </Tag>
-//                                 )}
-//                             </Col>
-//                             <Col style={{ textAlign: 'right' }}>
-//                                 <Paragraph type="secondary" style={{ margin: 0, fontSize: 12 }}>Total for {data.et} nights</Paragraph>
-//                                 <Title level={4} style={{ margin: '0 0 4px 0' }}>
-//                                     ₹{finalPrice.toLocaleString('en-IN')}
-//                                 </Title>
-//                                 {data.tPr > finalPrice && ( // Show original price if higher
-//                                     <Text delete type="secondary" style={{ marginRight: 8, fontSize: 12 }}>
-//                                         ₹{data.tPr.toLocaleString('en-IN')}
-//                                     </Text>
-//                                 )}
-//                                 <Button type="primary" href={data.durl} target="_blank" rel="noopener noreferrer">
-//                                     View Deal
-//                                 </Button>
-//                             </Col>
-//                         </Row>
-//                     </Col>
-//                 </Row>
-//             </Card>
-//         </motion.div>
-//     );
-// };
 
 // --- Main HotelBooking Component ---
 const HotelBooking = ({ selectedTripId, showModal }) => {

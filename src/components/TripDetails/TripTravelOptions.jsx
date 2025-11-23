@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Descriptions, Tag, Space, Timeline } from 'antd';
 import { CarOutlined, DollarCircleOutlined, ClockCircleOutlined, EnvironmentOutlined, FlagOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -11,23 +12,24 @@ const getModeIcon = (mode) => {
 }
 
 const TripTravelOptions = ({ travelOptions }) => {
+    const { t } = useTranslation();
     return (
         <div style={{ height: '100%', overflowY: 'auto', paddingRight: '16px' }}>
-            <Title level={4}>Travel Plan</Title>
+            <Title level={4}>{t('travel_plan')}</Title>
             <Paragraph type="secondary">
-                Recommended travel route from <Text strong>{travelOptions.from}</Text> to <Text strong>{travelOptions.to}</Text>.
+                {t('recommended_travel_route')} <Text strong>{travelOptions.from}</Text> {t('to')} <Text strong>{travelOptions.to}</Text>.
             </Paragraph>
             
             <Descriptions bordered column={1} size="small" style={{ marginBottom: 24 }}>
-                <Descriptions.Item label={<><DollarCircleOutlined /> Total Est. Cost</>}>
+                <Descriptions.Item label={<><DollarCircleOutlined /> {t('total_est_cost')}</>}>
                     <Text strong style={{color: '#1677ff'}}>{travelOptions.total_cost}</Text>
                 </Descriptions.Item>
-                <Descriptions.Item label={<><ClockCircleOutlined /> Total Est. Time</>}>
+                <Descriptions.Item label={<><ClockCircleOutlined />{t('total_est_time')}</>}>
                      <Text strong>{travelOptions.total_time}</Text>
                 </Descriptions.Item>
             </Descriptions>
             
-            <Title level={5}>Legs</Title>
+            <Title level={5}>{t('legs')}</Title>
             <Timeline>
                 {travelOptions.legs.map((leg, index) => (
                     <Timeline.Item key={index} dot={getModeIcon(leg.mode)}>

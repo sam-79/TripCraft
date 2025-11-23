@@ -7,10 +7,12 @@ import PlaceInfoWindow from './PlaceInfoWindow';
 import MapDirections from './MapDirections';
 import { mapStyle } from './mapStyle'; // Import style from its own file
 import "../../styles/TripGoogleMapView.css"
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 const TripGoogleMapView = ({ locations, highlightedPlaceId }) => {
+    const { t } = useTranslation();
     const [selectedPlace, setSelectedPlace] = useState(null);
 
     // Find the index of the currently selected place
@@ -42,14 +44,14 @@ const TripGoogleMapView = ({ locations, highlightedPlaceId }) => {
     if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
         return (
             <div className="map-error-container">
-                <Title level={4}>Configuration Missing</Title>
-                <Text>Please add <Text code>VITE_GOOGLE_MAPS_API_KEY</Text> to your .env file.</Text>
+                <Title level={4}>{t('configuration_missing')}</Title>
+                <Text>{t('add_google_maps_key')}<Text code>VITE_GOOGLE_MAPS_API_KEY</Text> {t('to_env_file')}</Text>
             </div>
         );
     }
 
     if (locations.length === 0) {
-        return <div className="map-placeholder">Finding locations for your trip...</div>;
+        return <div className="map-placeholder">{t('finding_locations')}...</div>;
     }
 
     return (

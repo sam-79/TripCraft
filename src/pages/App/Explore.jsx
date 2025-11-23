@@ -188,7 +188,7 @@ const Explore = () => {
                     hoverable
                     onClick={() => showPlaceDetails(p)}
                     style={{ borderRadius: 16, overflow: "hidden", height: "100%" }}
-                    cover={<img src={p.Image_url} alt={p.name} style={{ height: 180, objectFit: "cover" }} />}
+                    cover={<img src={p.Image_url} alt={p.name} loading="lazy" style={{ height: 180, objectFit: "cover" }} />}
                   >
                     <Title level={5}>{p.name}</Title>
                     <Paragraph ellipsis={{ rows: 2 }}>{p.description}</Paragraph>
@@ -208,7 +208,7 @@ const Explore = () => {
       <Drawer open={open} onClose={() => setOpen(false)} width={screens.xs ? "100%" : 640} closeIcon={<CloseOutlined />} title={activePlace?.name}>
         {activePlace && (
           <Space direction="vertical" size={16} style={{ width: "100%" }}>
-            <img src={activePlace.Image_url} alt={activePlace.name} style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 12 }} />
+            <img src={activePlace.Image_url} alt={activePlace.name} loading="lazy" style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 12 }} />
             <Title level={4}>{activePlace.name}, {activePlace.city}</Title>
             <Paragraph>{activePlace.description}</Paragraph>
             <Tag color="geekblue" style={{ fontSize: 14, padding: '5px 10px' }}>{activePlace.activitytype}</Tag>

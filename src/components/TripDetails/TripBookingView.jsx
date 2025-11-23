@@ -12,12 +12,14 @@ import {
     LinkOutlined
 } from '@ant-design/icons';
 import '../../styles/TripBookingView.css';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text, Link } = Typography;
 const { Panel } = Collapse;
 
 // A more robust function to determine tag color and icon based on availability
 const getAvailabilityTag = (status) => {
+    const { t } = useTranslation();
     if (!status) return null;
     const lowerStatus = status.toLowerCase();
 
@@ -34,13 +36,14 @@ const getAvailabilityTag = (status) => {
 
 // Component to display the list of classes for a single train
 const ClassAvailability = ({ classes }) => {
+    const { t } = useTranslation();
     // Filter out any classes with the "Tap To Refresh" status
     const availableClasses = classes.filter(cls =>
         cls.availablityStatus && !cls.availablityStatus.toLowerCase().includes('tap to refresh')
     );
 
     if (availableClasses.length === 0) {
-        return <Text type="secondary">No availability information.</Text>;
+        return <Text type="secondary">{t('no_availability_info')}</Text>;
     }
 
     return (
@@ -49,7 +52,7 @@ const ClassAvailability = ({ classes }) => {
                 <div key={index} className="class-item">
                     <Text className="class-name">{cls.className}</Text>
                     <div className="class-details">
-                        <Text className="class-fare"><WalletOutlined /> ₹{cls.totalFare}</Text>
+                        <Text className="class-fare"><WalletOutlined />{t('fare')}: ₹{cls.totalFare}</Text>
                         {getAvailabilityTag(cls.availablityStatus)}
                     </div>
                 </div>
@@ -61,6 +64,8 @@ const ClassAvailability = ({ classes }) => {
 
 // A dedicated card component for displaying a single train's details
 const TrainCard = ({ train }) => {
+    const { t } = useTranslation();
+
     return (
         <Card className="train-card" bordered={false}>
             <div className="train-header">
@@ -85,7 +90,7 @@ const TrainCard = ({ train }) => {
                 </div>
             </div>
             <Collapse ghost expandIconPosition="right" className="class-collapse">
-                <Panel header="View Availability & Fares" key="1">
+                <Panel header={t('availabilitynfare')} key="1">
                     <ClassAvailability classes={train.classes} />
                 </Panel>
             </Collapse>
@@ -95,6 +100,8 @@ const TrainCard = ({ train }) => {
 
 // The main view component
 const TripBookingView = ({ bookingData }) => {
+    const { t } = useTranslation();
+    
     if (!bookingData || !bookingData.to || bookingData.to.length === 0) {
         return <Empty description="No booking suggestions are available for this trip yet." />;
     }

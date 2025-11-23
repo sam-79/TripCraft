@@ -18,7 +18,7 @@ const TripBooking = () => {
     const { tripId } = useParams();
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(0);
-    const [stepStatus, setStepStatus] = useState('process');
+    const [stepStatus, setStepStatus] = useState('process'); //error, process, finish
     const [bookingData, setBookingData] = useState({});
 
     // --------------------------------------------------------

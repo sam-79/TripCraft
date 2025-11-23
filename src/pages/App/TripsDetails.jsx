@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router';
 import { Card, Typography, Spin, Alert, Button, Row, Col, Segmented, List, Avatar, Popconfirm, message, Tooltip } from 'antd';
 import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
-
+import dayjs from "dayjs";
 import { useGetTripByIdQuery, useDeleteTripPlaceMutation, useGenerateItineraryMutation, useGenerateTravelModeMutation, useGetWeatherConditionsQuery } from '../../api/tripApi';
 import { useGetBookingSuggestionsQuery } from '../../api/bookingApi';
-
+import { startCase, toLower } from 'lodash';
 // Import the child components
 // import TripMapView from '../../components/TripDetails/TripMapView';
 import TripGoogleMapView from '../../components/TripDetails/TripGoogleMapView';
@@ -29,7 +29,7 @@ const TripsDetails = () => {
 
     // Use RTK Query's polling feature to get live updates from the backend
     const { data: trip, error: tripError, isLoading: isLoadingTrip } = useGetTripByIdQuery(tripId, {
-        pollingInterval: 20000,
+        // pollingInterval: 20000,
         refetchOnMountOrArgChange: true,
     });
     // Weather data query - only runs when we have a tripId
@@ -39,7 +39,7 @@ const TripsDetails = () => {
     });
 
     const [deleteTripPlace, { isLoading: isDeletingPlace }] = useDeleteTripPlaceMutation();
-    const [generateItinerary, { isLoading: isGeneratingItinerary }] = useGenerateItineraryMutation();
+    const [generateItinerary, { data: generateItineraryResp, isLoading: isGeneratingItinerary }] = useGenerateItineraryMutation();
     // const [generatetravelMode, { isLoading: isTravelModeLoading }] = useGenerateTravelModeMutation();
 
 
@@ -67,12 +67,14 @@ const TripsDetails = () => {
         try {
             generateItinerary(tripId).unwrap();
             // generatetravelMode(tripId).unwrap();
-            messageApi.loading({ content: 'Generating your itinerary...', key: 'itinerary' });
+            generateItineraryResp.status ? messageApi.loading({ content: generateItineraryResp.message, key: 'itinerary' }): messageApi.error(generateItineraryResp.message);
             // Polling will automatically handle showing the result
         } catch (err) {
             messageApi.error({ content: 'Failed to start itinerary generation.', key: 'itinerary' });
         }
     };
+
+    const isHistoricalTrip = trip?.start_date ? dayjs(trip.start_date).isBefore(dayjs(), "day") : false;
 
 
     const renderContent = () => {
@@ -123,6 +125,13 @@ const TripsDetails = () => {
                                 //     ), value: 'travel', disabled: !travelOptsReady
                                 // },
 
+                                {
+                                    label: (
+                                        <Tooltip title={weatherReady ? null : 'Fetching weather info'}>
+                                            Weather & Alerts
+                                        </Tooltip>
+                                    ), value: 'weather', disabled: !weatherReady
+                                },
 
                                 {
                                     label: (
@@ -132,13 +141,6 @@ const TripsDetails = () => {
                                             Itinerary
                                         </Tooltip>
                                     ), value: 'itinerary', disabled: !itineraryReady
-                                },
-                                {
-                                    label: (
-                                        <Tooltip title={weatherReady ? null : 'Fetching weather info'}>
-                                            Weather & Alerts
-                                        </Tooltip>
-                                    ), value: 'weather', disabled: !weatherReady
                                 },
                                 // {
                                 //     label: (
@@ -226,28 +228,54 @@ const TripsDetails = () => {
                                         <LoadingAnimationOverlay text={trip.itineraries_status_message || "Crafting your itinerary..."} />
                                     </div>
                                     : <>
-                                        <TripItineraryView itinerary={trip.itineraries} onPlaceClick={setHighlightedPlaceId} />
-                                        <Button
-                                            type="primary"
-                                            block
-                                            style={{ marginTop: 24 }}
-                                            onClick={() => navigate(`/user/trips/${tripId}/booking`)} // Navigate to the new booking page
-                                        >
-                                            Proceed to Booking Options and Recommendations
-                                        </Button>
-                                    </>
+                                        <div style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            height: '100%',
+                                        }}>
+                                            <div style={{
+                                                flex: 1,
+                                                overflowY: 'auto',
+                                                paddingRight: 8 // optional scrollbar spacing
+                                            }}>
+                                                <TripItineraryView
+                                                    itinerary={trip.itineraries}
+                                                    onPlaceClick={setHighlightedPlaceId}
+                                                />
+                                            </div>
+                                            <Tooltip
+                                                title={
+                                                    isHistoricalTrip
+                                                        ? "This trip has already started or passed. Booking is no longer available. If not, User can update dates in TripInfo "
+                                                        : ""
+                                                }
+                                            >
+                                                <Button
+                                                    type="primary"
+                                                    block
+                                                    style={{ marginTop: 24 }}
+                                                    disabled={isHistoricalTrip}
+                                                    onClick={() =>
+                                                        !isHistoricalTrip && navigate(`/user/trips/${tripId}/booking`)
+                                                    } // Navigate to the new booking page
+                                                >
+                                                    Proceed to Booking Options and Recommendations
+                                                </Button>
+                                            </Tooltip>
+                                            </div>
+                                        </>
                             )}
 
-                            {
-                                // activeView === 'booking' && (
-                                //     isLoadingBooking
-                                //         ? <div style={{ textAlign: 'center', padding: '50px' }}><Spin tip="Fetching booking options..." /></div>
-                                //         : bookingError
-                                //             ? <Alert message="Could not fetch booking options." type="error" />
-                                //             : <TripBookingView bookingData={bookingData} />
-                                // )
-                            }
-                        </div>
+                                        {
+                                            // activeView === 'booking' && (
+                                            //     isLoadingBooking
+                                            //         ? <div style={{ textAlign: 'center', padding: '50px' }}><Spin tip="Fetching booking options..." /></div>
+                                            //         : bookingError
+                                            //             ? <Alert message="Could not fetch booking options." type="error" />
+                                            //             : <TripBookingView bookingData={bookingData} />
+                                            // )
+                                        }
+                                    </div>
                     </Col>
                     <Col xs={24} md={10} style={{ height: '100%' }}>
                         <TripGoogleMapView
@@ -279,7 +307,7 @@ const TripsDetails = () => {
                             style={{ marginRight: 8 }}
                         />
                         <Title level={3} style={{ margin: 0 }}>
-                            {trip?.trip_name || 'Loading...'}
+                            {startCase(toLower(trip?.trip_name)) || 'Loading...'}
                         </Title>
                     </span>
                 }

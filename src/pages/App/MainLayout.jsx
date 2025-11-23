@@ -31,6 +31,7 @@ import { useDispatch } from "react-redux";
 import "../../styles/MainLayout.css";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "../../components/LanguageSelector";
+import { useGetEnumsQuery } from "../../api/enumsApi";
 
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
@@ -43,6 +44,9 @@ const MainLayout = () => {
   const dispatch = useDispatch();
   const [logoutModal, logoutContext] = Modal.useModal();
   const { t } = useTranslation();
+
+  // fetch enums once globally
+  useGetEnumsQuery();
 
   // --- Define Sidebar Menu ---
   const menuItems = useMemo(
@@ -65,7 +69,7 @@ const MainLayout = () => {
       {
         key: "/user/trips",
         icon: <GlobalOutlined style={{ fontSize: "22px" }} />,
-        label: t("my_trip"),
+        label: t("my_trips"),
       },
       {
         key: "/user/bookings",

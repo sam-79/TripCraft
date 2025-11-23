@@ -31,10 +31,13 @@ import {
     CompassOutlined, // For GPS
     MedicineBoxOutlined, // For First Aid
     RightOutlined,
+    SafetyCertificateOutlined,
+    LinkOutlined
 } from '@ant-design/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
+import { useTranslation } from "react-i18next";
 
 // Import RTK Query hooks
 import {
@@ -50,6 +53,7 @@ const { Title, Text, Paragraph } = Typography;
 const BusSearchForm = ({ onSearch, searchParams, setSearchParams, fetchSuggestions, suggestions, isSuggestLoading }) => {
     const { fromCity, toCity, travelDate } = searchParams;
     const { fromOptions, toOptions } = suggestions;
+    const { t } = useTranslation();
 
     // Handle text input for AutoComplete
     const handleSearch = (field) => (value) => {
@@ -99,7 +103,7 @@ const BusSearchForm = ({ onSearch, searchParams, setSearchParams, fetchSuggestio
     return (
         <Row gutter={16} align="bottom">
             <Col flex={1}>
-                <Text>From</Text>
+                <Text>{t('from')}</Text>
                 <AutoComplete
                     size="large"
                     style={{ width: '100%' }}
@@ -124,7 +128,7 @@ const BusSearchForm = ({ onSearch, searchParams, setSearchParams, fetchSuggestio
             </Col>
 
             <Col flex={1}>
-                <Text>To</Text>
+                <Text>{t("to")}</Text>
                 <AutoComplete
                     size="large"
                     style={{ width: '100%' }}
@@ -138,7 +142,7 @@ const BusSearchForm = ({ onSearch, searchParams, setSearchParams, fetchSuggestio
                 />
             </Col>
             <Col>
-                <Text>Date</Text>
+                <Text>{t('date')}</Text>
                 <DatePicker
                     value={travelDate}
                     onChange={(date) => setSearchParams(prev => ({ ...prev, travelDate: date }))}
@@ -150,7 +154,7 @@ const BusSearchForm = ({ onSearch, searchParams, setSearchParams, fetchSuggestio
             </Col>
             <Col>
                 <Button type="primary" icon={<SearchOutlined />} size="large" style={{ marginTop: '24px' }} onClick={onSearch}>
-                    Search Buses
+                    {t('search_bus')}
                 </Button>
             </Col>
         </Row>
@@ -193,6 +197,7 @@ const AmenityIcon = ({ name }) => {
 
 // --- Result Card (Updated for Bus Data) ---
 const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
+    const { t } = useTranslation();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [bookingData, setBookingData] = useState(null);
@@ -205,7 +210,7 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
     // --- Booking Handler ---
     const handleBusBooking = async () => {
         if (!selectedTripId) {
-            messageApi.error("Trip not selected");
+            messageApi.error(t('trip_not_selected'));
             showModal();
             return
         }
@@ -220,7 +225,7 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
             }
         } catch (err) {
             console.error(err);
-            messageApi.error("Booking failed. Please try again.");
+            messageApi.error(`${t('booking_failed')}, ${t('try_again')}`);
         }
     };
 
@@ -237,11 +242,11 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
             if (res.checkout_url) {
                 window.location.href = res.checkout_url; // Redirect to Stripe
             } else {
-                messageApi.error("Payment session could not be created.");
+                messageApi.error(`${t('failed_generate_payment_session')}, ${t('try_again')}`);
             }
         } catch (err) {
             console.error(err);
-            messageApi.error("Payment initialization failed.");
+            messageApi.error(`${t('failed_generate_payment_session')}, ${t('try_again')}`);
         }
     };
 
@@ -312,7 +317,7 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
                             <div style={{ paddingLeft: '16px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                 <div>
                                     {data.rt && <Rate disabled defaultValue={parseFloat(data.rt)} allowHalf style={{ fontSize: 14 }} />}
-                                    <Paragraph type="secondary" style={{ margin: 0 }}>Starts from</Paragraph>
+                                    <Paragraph type="secondary" style={{ margin: 0 }}>{t('starting_from_label')}</Paragraph>
                                     <Title level={3} style={{ margin: 0 }}>
                                         ₹{data.amount}
                                     </Title>
@@ -326,9 +331,9 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
                                     </div>
                                 </div>
                                 <div>
-                                    <Text strong style={{ color: '#28a745' }}>{data.AvailableSeats} Seats Available</Text>
+                                    <Text strong style={{ color: '#28a745' }}>{data.AvailableSeats} {t('seat')} {t('available')}</Text>
                                     <Button type="primary" block style={{ marginTop: 8 }} onClick={handleBusBooking}>
-                                        Book Now
+                                        {t('book_now')}
                                     </Button>
                                 </div>
                             </div>
@@ -344,7 +349,7 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
                 onCancel={() => setIsModalVisible(false)}
                 footer={[
                     <Button key="close" onClick={() => setIsModalVisible(false)}>
-                        Close
+                        {t('close')}
                     </Button>,
                     <Button
                         key="pay"
@@ -352,13 +357,13 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
                         loading={isPaying}
                         onClick={handlePayNow}
                     >
-                        Pay Now
+                        {t('pay_now')}
                     </Button>,
                 ]}
             >
                 {bookingData ? (
                     <>
-                    {console.log(data)}
+                        {console.log(data)}
                         <Paragraph><strong>From : {userData?.from_city}</strong></Paragraph>
                         <Paragraph><strong>To : {userData?.to_city}</strong></Paragraph>
                         <Paragraph><strong>Journey Data : {bookingData?.journey_date}</strong></Paragraph>
@@ -367,7 +372,7 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
                         <Paragraph><strong>Amount : {data?.amount}</strong></Paragraph>
                     </>
                 ) : (
-                    <Paragraph>Loading booking details...</Paragraph>
+                    <Paragraph>{t('loading')}</Paragraph>
                 )}
             </Modal>
         </>
@@ -478,6 +483,34 @@ const BusBooking = ({ showModal, selectedTripId }) => {
 
         return (
             <div style={{ marginTop: 24 }}>
+                {/* Booking Banner */}
+                {(searchParams?.fromCity && searchParams?.toCity && searchParams.travelDate) && (
+                    <Alert
+                        message={
+                            <Row justify="space-between" align="middle" style={{ width: '100%' }}>
+                                <Col>
+                                    <Space>
+                                        <SafetyCertificateOutlined style={{ color: '#52c41a' }} />
+                                        <Text strong>Ready to book?</Text>
+                                        <Text type="secondary">Complete your reservation securely on EaseMyTrip.</Text>
+                                    </Space>
+                                </Col>
+                                <Col>
+                                    <Button
+                                        type="primary"
+                                        icon={<LinkOutlined />}
+                                        onClick={() => window.open(`https://bus.easemytrip.com/home/list?org=${searchParams.fromCity.name}&des=${searchParams.toCity.name}&date=${searchParams.travelDate.format('DD-MM-YYYY')}&searchid=${searchParams.fromCity.id}_${searchParams.toCity.id}&CCode=IN&AppCode=Emt`, '_blank')}
+                                        style={{ background: '#1890ff', borderColor: '#1890ff' }}
+                                    >
+                                        Book on EaseMyTrip
+                                    </Button>
+                                </Col>
+                            </Row>
+                        }
+                        type="info"
+                        style={{ marginBottom: 24, padding: '12px 24px', borderRadius: 8, border: '1px solid #91caff' }}
+                    />
+                )}
                 <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
                     <Col>
                         <Text strong>

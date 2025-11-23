@@ -30,7 +30,7 @@ import {
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import dayjs from "dayjs";
-
+import { startCase, toLower } from "lodash";
 const { Title, Text, Paragraph } = Typography;
 
 // --- Helper Functions for Download ---
@@ -462,7 +462,7 @@ const TripCard = ({ trip, index }) => {
               {trip.destination_image_url.map((url, i) => (
                 <div key={i}>
                   <img
-                    alt={`${trip.trip_name} image ${i + 1}`}
+                    alt={`${startCase(toLower(trip.trip_name))} image ${i + 1}`}
                     src={url}
                     style={{ width: "100%", height: 220, objectFit: "cover" }}
                   />
@@ -520,7 +520,7 @@ const TripCard = ({ trip, index }) => {
             textOverflow: "ellipsis",
           }}
         >
-          {trip.trip_name}
+          {startCase(toLower(trip.trip_name))}
         </Title>
         <Text type="secondary">
           <EnvironmentOutlined /> {trip.destination_full_name}

@@ -83,6 +83,7 @@ const HotelCard = ({ hotel, onMapOpen, onAddToBooking, bookingList }) => {
                   <img
                     alt={hotel.name}
                     src={img}
+                    loading='lazy'
                     style={{
                       width: '100%',
                       height: 180,
@@ -196,8 +197,8 @@ const ViewHotelRecs = ({ tripId, onComplete, setStatus, bookingList, onAddToBook
 
   React.useEffect(() => {
     if (error) setStatus('error');
-    else if (recommendationsData && recommendationsData.status) setStatus('finish');
-    else setStatus('process');
+    else setStatus('finish');
+    // else setStatus('process');
   }, [recommendationsData, error, setStatus]);
 
   if (isLoading)

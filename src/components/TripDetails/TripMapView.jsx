@@ -122,6 +122,7 @@ const TripMapView = ({ locations, highlightedPlaceId }) => {
                             <img
                                 src={place.image_url}
                                 alt={place.name}
+                                loading="lazy"
                                 className="popup-image"
                                 onError={(e) => {
                                     e.target.src =

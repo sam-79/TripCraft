@@ -34,8 +34,8 @@ export const userApi = createApi({
         // 3. Add/Create User Preferences
         updateUserPreferences: builder.mutation({
             query: (preferences) => ({
-                url: '/preferences/set',
-                method: 'POST',
+                url: '/preferences',
+                method: 'PUT',
                 body: preferences,
             }),
             invalidatesTags: ['Preferences'],
@@ -43,7 +43,8 @@ export const userApi = createApi({
 
         // 4. Get User Language
         getUserSettings: builder.query({
-            query: () => '/settings/get',
+            query: () => '/settings',
+            keepUnusedDataFor: 24 * 60 * 60, // cache for 24 hours
             providesTags: ['Settings'],
             transformResponse: (response) => response.data,
         }),
@@ -51,7 +52,7 @@ export const userApi = createApi({
         // 3. Update User Preferences
         updateUserSettings: builder.mutation({
             query: (settings) => ({
-                url: '/settings/update',
+                url: '/settings',
                 method: 'PUT',
                 body: settings,
             }),

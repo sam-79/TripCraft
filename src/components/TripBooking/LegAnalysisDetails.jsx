@@ -57,7 +57,7 @@ const LegAnalysisDetails = ({ leg, bookingList, onAddToBooking }) => {
             );
         }
 
-        // Add condition for flight_data_analysis here if needed
+        // Add condition for flight_data_analysis and more here if needed
 
         // Fallback for no detailed analysis
         return <Empty description="Detailed analysis for this leg is not available." />;

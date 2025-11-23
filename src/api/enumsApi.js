@@ -1,4 +1,4 @@
-
+// src/api/enumsApi.js
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const enumsApi = createApi({
@@ -17,6 +17,7 @@ export const enumsApi = createApi({
     endpoints: (builder) => ({
         getEnums: builder.query({
             query: () => '/settings/getenums',
+            keepUnusedDataFor: 24 * 60 * 60, // cache for 24 hours
         }),
         transformResponse: (response) => response.data,
     }),

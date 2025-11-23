@@ -102,6 +102,13 @@ export const bookingApi = createApi({
                 body,
             }),
         }),
+
+        // Fetch locality
+        getLocalityRecommendations: builder.query({
+            query: (tripId) => `/hotel-locality-recommendation/${tripId}`,
+            providesTags: (result, error, tripId) => [{ type: 'LocalityRecs', id: tripId }],
+            transformResponse: (response) => response.data,
+        }),
     }),
 });
 
@@ -117,6 +124,7 @@ export const {
     useCreateBusBookingMutation,
     useCreateHotelBookingMutation,
     useCreateTrainBookingMutation,
+    useGetLocalityRecommendationsQuery
 } = bookingApi;
 
 
