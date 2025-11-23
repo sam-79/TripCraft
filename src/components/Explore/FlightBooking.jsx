@@ -10,7 +10,7 @@ import {
 } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
-import Lottie from 'lottie-react';;
+import Lottie from 'lottie-react';
 import comingSoonAnimation from '../../assets/flight-booking-coming-soon.json'; 
 
 const { Title, Text } = Typography;

@@ -106,7 +106,8 @@ const AnalyzeTravel = ({ tripId, onComplete, setStatus, bookingList, onAddToBook
   }));
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} >
+      {modalContextHolder}
 
       <Title level={4}>Travel Option Analysis</Title>
       <Paragraph type="secondary">
@@ -147,7 +148,6 @@ const AnalyzeTravel = ({ tripId, onComplete, setStatus, bookingList, onAddToBook
       >
         Confirm Analysis & Proceed to Hotel Preferences
       </Button>
-      {modalContextHolder}
     </motion.div>
   );
 };

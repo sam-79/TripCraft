@@ -14,7 +14,7 @@ import {
   Tag,
   Spin,
   Divider,
-  Tooltip
+  Modal
 } from "antd";
 import {
   HomeOutlined,
@@ -24,70 +24,333 @@ import {
   SafetyCertificateOutlined,
   CarOutlined,
   RobotOutlined,
-  CheckCircleOutlined
+  CheckCircleOutlined,
+  MedicineBoxOutlined,
+  AlertOutlined,
+  ShopOutlined,
+  InfoCircleOutlined,
+  StarFilled,
+  CompassOutlined,
+  WifiOutlined,
+  CoffeeOutlined,
+  BankOutlined,
+  SmileOutlined
 } from "@ant-design/icons";
-import { useSetHotelPreferencesMutation, useGetLocalityRecommendationsQuery } from "../../api/bookingApi"; // Make sure this hook exists in bookingApi.js
+import { motion, AnimatePresence } from "framer-motion";
+import { debounce } from 'lodash';
+// import Lottie from 'lottie-react';
 
+import { useSetHotelPreferencesMutation, useGetLocalityRecommendationsQuery } from "../../api/bookingApi";
 import { useGetEnumsQuery } from "../../api/enumsApi";
 import { fetchPlaceSuggestions } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
-import { debounce } from 'lodash';
 
 
-const { Title, Paragraph } = Typography;
+
+// -------------------------------------------------------------
+
+const { Title, Paragraph, Text } = Typography;
+
+// --- Helper: Rating Colorizer ---
+const getRatingColor = (ratingStr) => {
+  if (!ratingStr) return '#d9d9d9';
+  const lower = ratingStr.toLowerCase();
+  if (lower.includes('excellent') || lower.includes('good')) return '#52c41a'; // Green
+  if (lower.includes('average')) return '#faad14'; // Yellow
+  return '#ff4d4f'; // Red
+};
+
+// --- Sub-Component: Detailed Locality Card ---
+const LocalityCard = ({ locality, onSelect, isSelected }) => {
+  const [open, setOpen] = useState(false);
+
+  const suitabilityScore =
+    parseInt(
+      locality.location_info?.tourist_suitability_score?.split("/")[0] || 0
+    ) * 10;
+
+  return (
+    <>
+      {/* ================= CARD ================= */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        whileHover={{ scale: 1.02 }}
+        style={{ marginBottom: 24 }}
+      >
+        <Card
+          hoverable
+          style={{
+            borderRadius: 16,
+            border: isSelected ? "2px solid #1890ff" : "1px solid #eee",
+            background: isSelected ? "#f0f9ff" : "#fff",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+            overflow: "hidden",
+            cursor: "pointer",
+            transition: "0.25s",
+          }}
+          bodyStyle={{ padding: 0 }}
+          actions={[
+            <Button
+              block
+              type="link"
+              icon={<CheckCircleOutlined />}
+              onClick={() => onSelect(locality.locality_name)}
+            >
+              {isSelected ? "Selected" : "Choose This Area"}
+            </Button>,
+            <Button
+              block
+              type="link"
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(true);
+              }}
+            >
+              View more details →
+            </Button>
+          ]}
+        >
+          {/* Header */}
+          <div
+            style={{
+              background: isSelected
+                ? "linear-gradient(90deg, #1890ff 0%, #69c0ff 100%)"
+                : "#fafafa",
+              padding: "12px 24px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Space>
+              {locality.rank_id === 1 && (
+                <motion.div
+                  animate={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ repeat: Infinity, duration: 3 }}
+                >
+                  <StarFilled style={{ color: "#fadb14", fontSize: 18 }} />
+                </motion.div>
+              )}
+              <Text
+                strong
+                style={{ fontSize: 16, color: isSelected ? "white" : "#333" }}
+              >
+                {locality.locality_name}
+              </Text>
+            </Space>
+
+            <Tag color={isSelected ? "lime" : "blue"}>
+              {locality.location_info?.hotel_budget_range}
+            </Tag>
+          </div>
+
+          {/* Basic preview */}
+          <div style={{ padding: 20 }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              {/* <Lottie animationData={locationAnim} style={{ width: 50 }} /> */}
+              <Paragraph
+                ellipsis={{ rows: 2 }}
+                style={{ fontSize: 14, color: "#555" }}
+              >
+                {locality.strategic_positioning}
+              </Paragraph>
+            </motion.div>
+
+            <Row gutter={12} style={{ marginTop: 12 }}>
+              <Col span={12}>
+                {/* <Lottie animationData={locationAnim} style={{ width: 35 }} /> */}
+                <Text>Connectivity: </Text>
+                <Text strong>{locality.connectivity?.overall_connectivity_rating}</Text>
+              </Col>
+
+              <Col span={12}>
+                {/* <Lottie animationData={safetyAnim} style={{ width: 35 }} /> */}
+                <Text>Safety: </Text>
+                <Text strong>{locality.safety?.overall_rating}</Text>
+              </Col>
+            </Row>
+
+
+          </div>
+        </Card>
+      </motion.div>
+
+      {/* ================= MODAL ================= */}
+      <Modal
+        open={open}
+        footer={null}
+        onCancel={() => setOpen(false)}
+        width={750}
+        style={{ top: 20 }}
+        bodyStyle={{ padding: 0 }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          style={{
+            padding: 28,
+          }}
+        >
+          {/* Modal Header with Lottie */}
+          <div style={{ textAlign: "center" }}>
+            {/* <Lottie animationData={locationAnim} style={{ width: 150 }} /> */}
+            <Title level={3}>{locality.locality_name}</Title>
+            <Text type="secondary">{locality.strategic_positioning}</Text>
+          </div>
+
+          <Divider />
+
+          {/* Connectivity Section */}
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Title level={4}>
+              <CarOutlined /> Connectivity
+            </Title>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Text strong>Overall: </Text>
+                {locality.connectivity?.overall_connectivity_rating}
+              </Col>
+              <Col span={12}>
+                <Text strong>Bus Frequency: </Text>
+                {locality.connectivity?.bus_connectivity?.frequency}
+              </Col>
+            </Row>
+          </motion.div>
+
+          <Divider />
+
+          {/* Safety Section */}
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Title level={4}>
+              <SafetyCertificateOutlined /> Safety
+            </Title>
+
+            <Paragraph>{locality.safety?.overall_rating}</Paragraph>
+
+            <ul>
+              {locality.safety?.safety_concerns?.map((c, i) => (
+                <li key={i}>{c}</li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <Divider />
+
+          {/* Hospitals */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Title level={4}>Nearby Hospitals</Title>
+            {/* <Lottie animationData={hospitalAnim} style={{ width: 90 }} /> */}
+
+            {locality.safety?.nearby_hospitals?.map((h, i) => (
+              <Paragraph key={i}>
+                <strong>{h.name}</strong> ({h.rating})
+                <br />
+                <Text type="secondary">{h.address}</Text>
+              </Paragraph>
+            ))}
+          </motion.div>
+
+          <Divider />
+
+          {/* Restaurants */}
+          <Title level={4}>Popular Food Spots</Title>
+          {/* <Lottie animationData={foodAnim} style={{ width: 100 }} /> */}
+
+          {locality.location_info?.restaurants_cafes?.map((r, i) => (
+            <Tag key={i} style={{ marginBottom: 6 }}>
+              {r.name} ({r.rating})
+            </Tag>
+          ))}
+
+          <Divider />
+
+          <Button
+            type="primary"
+            icon={<CheckCircleOutlined />}
+            block
+            size="large"
+            onClick={() => onSelect(locality.locality_name)}
+          >
+            {isSelected ? "Selected" : "Choose This Area"}
+          </Button>
+        </motion.div>
+      </Modal>
+    </>
+  );
+};
 
 const SetHotelPrefs = ({ tripId, onComplete, setStatus }) => {
   const { t } = useTranslation();
-
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
-  // 1. Enums API
+  // --- API HOOKS ---
   const { data: enums, isLoading: isEnumLoading } = useGetEnumsQuery();
+  const {
+    data: recData,
+    isLoading: isRecLoading,
+    isSuccess: isRecSuccess
+  } = useGetLocalityRecommendationsQuery(tripId, { skip: !tripId });
 
-  // 2. Recommendation API
-  const { 
-    data: recData, 
-    isLoading: isRecLoading 
-  } = useGetLocalityRecommendationsQuery(tripId);
+  const [setPreferences, { isLoading: isSubmitting }] = useSetHotelPreferencesMutation();
 
-  // 3. Set Preferences Mutation
-  const [setPreferences, { isLoading }] = useSetHotelPreferencesMutation();
-
-  // State for AutoComplete
+  // State
   const [hotellocality, setHotelLocality] = useState([]);
   const debouncedSearch = useCallback(debounce(fetchPlaceSuggestions, 300), []);
 
-  // Helper to set locality from recommendation card
+  // Data Extraction
+  const recommendations = recData?.data?.ai_hotel_locality_recommendation?.recommended_localities || [];
+  const placesToCover = recData?.data?.ai_hotel_locality_recommendation?.places_to_cover || [];
+  const selectedLocality = Form.useWatch('locality', form);
+
   const applyRecommendation = (localityName) => {
     form.setFieldsValue({ locality: localityName });
-    messageApi.info(`Selected: ${localityName}`);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    messageApi.info(`Preference set to: ${localityName}`);
+    // Smooth scroll back to form
+    document.querySelector('.hotel-prefs-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Handler for form submission
   const handleFinish = async (values) => {
     const payload = {
       trip_id: parseInt(tripId),
       ...values,
     };
     try {
-      const result = await setPreferences(payload); // Mock doesn't have .unwrap()
-      const response = result.data || result;
-      
-      // In mock scenario, check success manually if needed
+      const result = await setPreferences(payload); // Use mock return structure
+      const response = result.data;
       messageApi.success(response.message || "Hotel preferences saved!");
       setStatus("finish");
       onComplete(response.data);
     } catch (err) {
-      messageApi.error(
-        err.data?.message || "Failed to save hotel preferences."
-      );
+      messageApi.error(err.data?.message || "Failed to save preferences.");
       setStatus("error");
     }
   };
-
-  const recommendations = recData?.data?.ai_hotel_locality_recommendation?.recommended_localities || [];
 
   return (
     <div>
@@ -96,168 +359,172 @@ const SetHotelPrefs = ({ tripId, onComplete, setStatus }) => {
       <Paragraph type="secondary">
         Tell us your preferences so we can find the best options for your stay.
       </Paragraph>
-
       <Form
         form={form}
         layout="vertical"
         onFinish={handleFinish}
         initialValues={{
-          // Sensible defaults
           no_of_rooms: 1,
           no_of_child: 0,
-          min_price: 500,
+          min_price: 1000,
           max_price: 5000,
-          selected_property_types: ["Hotel"], // Default to Hotel
-          locality:"..."
+          selected_property_types: ["Hotel"],
+          locality: ""
         }}
       >
-        {/* --- LOCALITY INPUT --- */}
-        <Form.Item 
-          name="locality" 
-          label={t('hotel_locality')} 
-          rules={[{ required: true, message: "Please select a locality" }]}
-        >
-          <AutoComplete 
-            options={hotellocality} 
-            onSearch={(text) => debouncedSearch(text, setHotelLocality)} 
-            placeholder={t('base_location_placeholder')}
-            style={{ height: 40 }}
-          />
-        </Form.Item>
+        <Row gutter={24}>
+          {/* Locality - Full Width */}
+          <Col span={24}>
+            <Form.Item
+              name="locality"
+              label={<Space><EnvironmentOutlined /> <Text strong>Preferred Locality / Area</Text></Space>}
+              rules={[{ required: true, message: "Please enter or select a locality" }]}
+            >
+              <AutoComplete
+                options={hotellocality}
+                onSearch={(text) => debouncedSearch(text, setHotelLocality)}
+                placeholder="e.g. Near City Center"
+                size="large"
+                style={{ borderRadius: 8 }}
+              />
+            </Form.Item>
+          </Col>
 
-        {/* --- AI RECOMMENDATIONS SECTION --- */}
-        {isRecLoading ? (
-          <div style={{ textAlign: 'center', padding: '20px', background: '#f0f2f5', borderRadius: 8, marginBottom: 24 }}>
-            <Spin size="small" /> <Text type="secondary" style={{ marginLeft: 8 }}>Analyzing best localities for you...</Text>
-          </div>
-        ) : recommendations.length > 0 && (
-          <div style={{ marginBottom: 24 }}>
-            <Space style={{ marginBottom: 12 }}>
-              <RobotOutlined style={{ color: '#1890ff', fontSize: 18 }} />
-              <Text strong>AI Recommended Localities</Text>
-            </Space>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {recommendations.map((rec) => (
-                <Card 
-                  key={rec.rank_id}
-                  size="small"
-                  hoverable
-                  onClick={() => applyRecommendation(rec.locality_name)}
-                  style={{ 
-                    border: '1px solid #d9d9d9', 
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    background: form.getFieldValue('locality') === rec.locality_name ? '#e6f7ff' : '#fff',
-                    borderColor: form.getFieldValue('locality') === rec.locality_name ? '#1890ff' : '#d9d9d9'
-                  }}
-                >
-                  <Row gutter={[16, 8]}>
-                    <Col xs={24} sm={18}>
-                      <Space>
-                        <Text strong style={{ fontSize: 15 }}>{rec.locality_name}</Text>
-                        {rec.rank_id === 1 && <Tag color="gold">Top Choice</Tag>}
-                      </Space>
-                      <Paragraph 
-                        type="secondary" 
-                        ellipsis={{ rows: 2, expandable: true, symbol: 'more' }} 
-                        style={{ fontSize: 13, marginTop: 6, marginBottom: 8 }}
-                      >
-                        {rec.strategic_positioning}
-                      </Paragraph>
-                      <Space size={[0, 8]} wrap>
-                        <Tag icon={<SafetyCertificateOutlined />} color={rec.safety?.overall_rating === "Good" ? "success" : "default"}>
-                          Safety: {rec.safety?.overall_rating}
-                        </Tag>
-                        <Tag icon={<CarOutlined />}>
-                          Connectivity: {rec.connectivity?.overall_connectivity_rating}
-                        </Tag>
-                        <Tag color="blue">{rec.location_info?.hotel_budget_range}</Tag>
-                      </Space>
-                    </Col>
-                    <Col xs={24} sm={6} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                      <Button 
-                        type="link" 
-                        icon={<CheckCircleOutlined />} 
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent card click bubbling
-                          applyRecommendation(rec.locality_name);
-                        }}
-                      >
-                        Select
-                      </Button>
-                    </Col>
+          {/* Budget Row */}
+          <Col xs={24} md={12}>
+            <Form.Item label={<Space><DollarCircleOutlined /> <Text strong>Budget Range (per night)</Text></Space>} style={{ marginBottom: 0 }}>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item name="min_price" rules={[{ required: true }]}>
+                    <InputNumber prefix="₹" placeholder="Min" style={{ width: '100%' }} size="large" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item name="max_price" rules={[{ required: true }]}>
+                    <InputNumber prefix="₹" placeholder="Max" style={{ width: '100%' }} size="large" />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form.Item>
+          </Col>
+
+          {/* Occupancy Row */}
+          <Col xs={24} md={12}>
+            <Form.Item label={<Space><TeamOutlined /> <Text strong>Occupancy</Text></Space>} style={{ marginBottom: 0 }}>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item name="no_of_rooms" rules={[{ required: true }]}>
+                    <InputNumber prefix={<HomeOutlined style={{ color: '#bfbfbf' }} />} placeholder="Rooms" min={1} style={{ width: '100%' }} size="large" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item name="no_of_child">
+                    <InputNumber prefix={<SmileOutlined style={{ color: '#bfbfbf' }} />} placeholder="Children" min={0} style={{ width: '100%' }} size="large" />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form.Item>
+          </Col>
+
+          {/* Property Types */}
+          <Col span={24}>
+            {isEnumLoading ? (
+              <Spin />
+            ) : (
+              <Form.Item
+                name="selected_property_types"
+                label={<Space><BankOutlined /> <Text strong>Accommodation Type</Text></Space>}
+                rules={[{ required: true, message: "Select at least one type" }]}
+              >
+                <Checkbox.Group style={{ width: '100%' }}>
+                  <Row gutter={[12, 12]}>
+                    {enums?.data?.property_types.map(pt => (
+                      <Col xs={12} sm={8} md={6} key={pt}>
+                        <Checkbox value={pt}>{pt}</Checkbox>
+                      </Col>
+                    ))}
                   </Row>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* --- ROOMS & GUESTS --- */}
-        <Row gutter={16}>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              name="no_of_rooms"
-              label={<Space><HomeOutlined /> Number of Rooms</Space>}
-              rules={[{ required: true, message: "Please enter the number of rooms!" }]}
-            >
-              <InputNumber min={1} style={{ width: "100%" }} />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              name="no_of_child"
-              label={<Space><TeamOutlined /> Number of Children</Space>}
-              rules={[{ required: true, message: "Please enter number of children!" }]}
-            >
-              <InputNumber min={0} style={{ width: "100%" }} />
-            </Form.Item>
+                </Checkbox.Group>
+              </Form.Item>
+            )}
           </Col>
         </Row>
 
-        {/* --- PRICE RANGE --- */}
-        <Row gutter={16}>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              name="min_price"
-              label={<Space><DollarCircleOutlined /> Min Price (INR)</Space>}
-              rules={[{ required: true, message: "Enter min price!" }]}
-            >
-              <InputNumber min={0} style={{ width: "100%" }} />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              name="max_price"
-              label={<Space><DollarCircleOutlined /> Max Price (INR)</Space>}
-              rules={[{ required: true, message: "Enter max price!" }]}
-            >
-              <InputNumber min={1} style={{ width: "100%" }} />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Divider />
 
-        {/* --- PROPERTY TYPES --- */}
-        {isEnumLoading ? (
-          <Spin size="large" tip={"Loading property types ..."} style={{ display: 'block', margin: '20px auto' }} />
-        ) : (
-          <Form.Item
-            name="selected_property_types"
-            label="Preferred Property Types"
-            rules={[{ required: true, message: "Select at least one property type!" }]}
-          >
-            <Checkbox.Group options={enums.propertyTypeOptions} />
-          </Form.Item>
-        )}
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={isLoading} block size="large" style={{ marginTop: 10 }}>
-            Save Preferences & Find Hotels
-          </Button>
-        </Form.Item>
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={isSubmitting}
+          block
+          size="large"
+          style={{ height: 50, fontSize: 18, borderRadius: 12, fontWeight: 600, background: 'linear-gradient(90deg, #1890ff 0%, #096dd9 100%)', border: 'none' }}
+        >
+          Save Preferences & Search
+        </Button>
       </Form>
-    </div>
+
+      {/* --- SUGGESTIONS SECTION (BOTTOM) --- */}
+
+      <div style={{ marginTop: 40 }}>
+        <Divider orientation="center" style={{ borderColor: '#d9d9d9' }}>
+          <Space align="center">
+            <div style={{ padding: 8, background: '#e6f7ff', borderRadius: '50%' }}>
+              <RobotOutlined style={{ color: '#1890ff', fontSize: 24 }} />
+            </div>
+            <Title level={4} style={{ margin: 0 }}>AI Smart Suggestions</Title>
+          </Space>
+        </Divider>
+
+        <AnimatePresence mode="wait">
+          {isRecLoading ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              style={{ textAlign: 'center', padding: 40 }}
+            >
+              <Spin size="large" />
+              <Paragraph style={{ marginTop: 16, color: '#8c8c8c' }}>
+                Analyzing your itinerary to find the most strategic stay locations...
+              </Paragraph>
+            </motion.div>
+          ) : recommendations.length > 0 ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+
+              {/* Context Bar */}
+              {placesToCover.length > 0 && (
+                <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                  <Text type="secondary" style={{ marginRight: 12 }}>Optimization Strategy: Minimize travel time to</Text>
+                  <Space wrap style={{ justifyContent: 'center' }}>
+                    {placesToCover.map(place => (
+                      <Tag key={place} icon={<CompassOutlined />} color="geekblue">{place}</Tag>
+                    ))}
+                  </Space>
+                </div>
+              )}
+
+              {/* List of Cards in GRID Layout */}
+              <Row gutter={[16, 16]}>
+                {recommendations.map((rec) => (
+                  <Col xs={24} sm={12} md={8} lg={8} key={rec.rank_id}>
+                    <LocalityCard
+                      locality={rec}
+                      onSelect={applyRecommendation}
+                      isSelected={selectedLocality === rec.locality_name}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </motion.div>
+          ) : isRecSuccess ? (
+            <div style={{ textAlign: 'center', padding: 40, background: '#fafafa', borderRadius: 16 }}>
+              <InfoCircleOutlined style={{ fontSize: 32, color: '#d9d9d9', marginBottom: 16 }} />
+              <Paragraph>No specific locality recommendations available for this trip configuration.</Paragraph>
+            </div>
+          ) : null}
+        </AnimatePresence>
+      </div>
+    </div >
   );
 };
 

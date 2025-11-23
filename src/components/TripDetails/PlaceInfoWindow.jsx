@@ -36,7 +36,7 @@ const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
                                 onError={(e) => {
                                     e.target.onerror = null; // prevent infinite loop
                                     e.target.style.display = 'none'; // hide broken image
-                                    const placeholder = e.target.parentNode.querySelector('.image-placeholder');
+                                    const placeholder = e.target.parentNode.querySelector('#image-placeholder');
                                     if (placeholder) placeholder.style.display = 'flex';
                                 }}
                                 style={{
@@ -49,13 +49,14 @@ const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
 
                             {/* TEXTUAL PLACEHOLDER */}
                             <div style={{
-                                display: 'flex',
+                                display: 'none',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 height: 150,
                                 borderRadius: '8px 8px 0 0',
-                                background: '#f5f5f5'
+                                background: '#f5f5f5',
+                                id:'image-placeholder'
                             }}>
                                 <EnvironmentOutlined style={{ fontSize: 24, color: '#888' }} />
                                 <span style={{ marginTop: 4, color: '#666', fontWeight: 500 }}>No Image</span>

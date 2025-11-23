@@ -70,6 +70,7 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ padding: '24px' }}>
+            <Divider>Trip Details</Divider>
             <Form form={form} layout="vertical" onFinish={onFinish}>
                 <Form.Item name="trip_name" label={t("trip_name_label")} rules={[{ required: true, message: t('trip_name_required') }]}>
                     <Input placeholder={t('trip_name_placeholder')} />
@@ -96,7 +97,7 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
                 <Text type="secondary" style={{ fontSize: 12 }}>
                     Note: Please select only the dates you will be at the destination. Do not include travel days to or from the location.
                 </Text>
-                <Divider>Trip Details</Divider>
+
                 <Row gutter={16}>
                     <Col span={12}>
                         <Form.Item name="budget" label={t('budget_label')} rules={[{ required: true }]}>
@@ -110,16 +111,16 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
                     </Col>
                 </Row>
 
-                <Divider>{t('travel_preferences')}</Divider>
+                {/* <Divider>{t('travel_preferences')}</Divider> */}
 
                 <Row gutter={16}>
-                    <Col span={8}>
+                    {/* <Col span={8}>
                         <Form.Item name="travel_mode" label={t('travel_mode_label')} rules={[{ required: true }]}>
                             <Select placeholder={t('travel_mode_placeholder')} options={travelModeOptions.map(o => ({ label: o, value: o }))} />
                         </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                        <Form.Item name="travelling_with" label="Travelling With *" rules={[{ required: true }]}>
+                    </Col> */}
+                    <Col span={12}>
+                        <Form.Item name="travelling_with" label="Travelling With" rules={[{ required: true }]}>
                             <Select placeholder={t('travelling_with_placeholder')} options={travellingWithOptions.map(o => ({ label: o, value: o }))} />
                         </Form.Item>
                     </Col>
@@ -131,7 +132,7 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
                         </Form.Item>
                     </Col>
                 </Row>
-                <Divider>Stay & Food Preferences</Divider>
+                {/* <Divider>Stay & Food Preferences</Divider>
                 <Row gutter={16}>
                     <Col span={8}>
                         <Form.Item name="property_type" label={t('property_type_label')}>
@@ -148,7 +149,7 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
                             <Select placeholder="Anything" options={foodPreferenceOptions.map(o => ({ label: o, value: o }))} />
                         </Form.Item>
                     </Col>
-                </Row>
+                </Row> */}
 
                 <Form.Item style={{ marginTop: '24px' }}>
                     <Button type="primary" htmlType="submit" loading={isAddingTrip} block size="large">

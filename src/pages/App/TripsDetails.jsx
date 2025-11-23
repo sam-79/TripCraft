@@ -29,7 +29,7 @@ const TripsDetails = () => {
 
     // Use RTK Query's polling feature to get live updates from the backend
     const { data: trip, error: tripError, isLoading: isLoadingTrip } = useGetTripByIdQuery(tripId, {
-        // pollingInterval: 20000,
+        pollingInterval: 20000,
         refetchOnMountOrArgChange: true,
     });
     // Weather data query - only runs when we have a tripId
@@ -65,14 +65,18 @@ const TripsDetails = () => {
 
     const handleGenerateItinerary = async () => {
         try {
-            generateItinerary(tripId).unwrap();
-            // generatetravelMode(tripId).unwrap();
-            generateItineraryResp.status ? messageApi.loading({ content: generateItineraryResp.message, key: 'itinerary' }) : messageApi.error(generateItineraryResp.message);
-            // Polling will automatically handle showing the result
+            const resp = await generateItinerary(tripId).unwrap(); // <-- use this
+            resp.status
+                ? messageApi.loading({ content: resp.message, key: "itinerary" })
+                : messageApi.error(resp.message);
         } catch (err) {
-            messageApi.error({ content: 'Failed to start itinerary generation.', key: 'itinerary' });
+            messageApi.error({
+                content: "Failed to start itinerary generation.",
+                key: "itinerary",
+            });
         }
     };
+
 
     const isHistoricalTrip = trip?.start_date ? dayjs(trip.start_date).isBefore(dayjs(), "day") : false;
 
@@ -237,24 +241,25 @@ const TripsDetails = () => {
                                                 <Tooltip
                                                     title={
                                                         isHistoricalTrip
-                                                            ? "This trip has already started or passed. Syncing is no longer available. If not, User can update dates in TripInfo "
-                                                            : "Update iternerary with weather data"
+                                                            ? "This trip has already started or ended, so syncing is no longer available. If needed, you can update the trip dates in Trip Info."
+                                                            : itineraryReady
+                                                                ? "Update the itinerary with the latest weather information."
+                                                                : "This option will be enabled once the itinerary is generated."
                                                     }
                                                 >
                                                     <Button
                                                         type="primary"
                                                         block
                                                         style={{ marginTop: 16 }}
-                                                    // onClick={handleGenerateItinerary}
-                                                    // loading={isGeneratingItinerary}
+                                                        // onClick={handleGenerateItinerary}
+                                                        // loading={isGeneratingItinerary}
+                                                        disabled={isHistoricalTrip || !itineraryReady}
                                                     >
                                                         Sync Iternerary based on Weather Conditions
                                                     </Button>
                                                 </Tooltip>
                                             </div>
                                         </>
-
-
                             )}
 
                             {activeView === 'itinerary' && (
