@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { userApi } from '../../api/userApi';
 
 const initialState = {
   language: 'English', // Default language
@@ -12,6 +13,12 @@ const langSlice = createSlice({
       state.language = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(userApi.endpoints.getUserSettings.matchFulfilled, (state, { payload }) => {
+        state.language = payload.native_language;
+      })
+  }
 });
 
 export const { setLanguage } = langSlice.actions;

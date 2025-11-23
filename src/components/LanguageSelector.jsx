@@ -45,9 +45,11 @@ function LanguageSelector() {
         try {
             // Send the update to the server in the background
             await updateUserSettings({ native_language: value }).unwrap();
-            messageApi.success(`Language updated to ${value}`);
+            // messageApi.success(`Language updated to ${value}`);
+            messageApi.success(i18n.t('language_updated', { language: value }));
         } catch (err) {
-            messageApi.error("Failed to save language preference.");
+            // messageApi.error("Failed to save language preference.");
+            messageApi.error(i18n.t('language_update_failed'));
             // If the API call fails, revert to the previous language
             dispatch(setLanguage(currentLanguage));
         }
@@ -64,7 +66,7 @@ function LanguageSelector() {
         <div>
             {messageApiContextHolder}
             <Select
-                defaultValue={currentLanguage}
+                value={currentLanguage}
                 style={{ width: 140 }}
                 bordered={false}
                 onChange={handleLanguageChange}

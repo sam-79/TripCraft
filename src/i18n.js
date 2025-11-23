@@ -10,7 +10,7 @@ i18n
   .use(initReactI18next) // pass to react-i18next
   .init({
     fallbackLng: 'English', // default language
-    supportedLngs: ['English', 'Hindi'], // match folder names
+    supportedLngs: ['English', 'Hindi', "Marathi"], // match folder names
     ns: ['translation'],
     defaultNS: 'translation',
     interpolation: {
