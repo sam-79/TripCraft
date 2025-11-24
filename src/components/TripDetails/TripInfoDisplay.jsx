@@ -33,25 +33,16 @@ import {
     CameraOutlined,
     ReadOutlined,
 } from "@ant-design/icons";
-import { useUpdateTripMutation } from "../../api/tripApi";
 import dayjs from "dayjs";
 import "../../styles/TripInfo.css";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUpdateTripMutation } from "../../api/tripApi";
+import { useGetEnumsQuery } from "../../api/enumsApi";
+import { all_enums } from "../../constants/contants";
 
 const { Text, Title, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
-
-const activityOptions = [
-    "Adventure",
-    "Heritage",
-    "Nightlife",
-    "Relaxation",
-    "Nature",
-    "Culture",
-];
-// const travelModeOptions = ["Bike", "Car", "Flight", "Train", "Train&Road", "Flight&Road", "Custom"];
-const travellingWithOptions = ["Solo", "Partner", "Friends", "Family"];
 
 const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("en-GB", {
@@ -61,7 +52,7 @@ const formatDate = (dateString) =>
     });
 
 // --- Styled Components / Motion Wrappers ---
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 const StatCard = ({ icon, label, value, color }) => (
     <Card
@@ -100,6 +91,9 @@ const TripInfoDisplay = ({ trip }) => {
     const [form] = Form.useForm();
     const [updateTrip, { isLoading: isUpdating }] = useUpdateTripMutation();
     const { t } = useTranslation();
+    const { data: enums} = useGetEnumsQuery();
+    const allenums = enums?.data || all_enums
+
 
     // Derived Data for Summaries
     const itineraryCount = trip?.itineraries?.length || 0;
@@ -208,7 +202,7 @@ const TripInfoDisplay = ({ trip }) => {
                     <Form.Item name="travelling_with" label={t("travelling_with")}>
                         <Select
                             size="large"
-                            options={travellingWithOptions.map((o) => ({
+                            options={allenums.travelling_with.map((o) => ({
                                 label: o,
                                 value: o,
                             }))}
@@ -219,7 +213,7 @@ const TripInfoDisplay = ({ trip }) => {
                         <Checkbox.Group
                             style={{ display: "flex", flexWrap: "wrap", gap: 8 }}
                         >
-                            {activityOptions.map((opt) => (
+                            {allenums.activities.map((opt) => (
                                 <Col key={opt} span={11}>
                                     <Checkbox value={opt}>{opt}</Checkbox>
                                 </Col>
@@ -259,7 +253,12 @@ const TripInfoDisplay = ({ trip }) => {
                 style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}
             >
                 {heroImages.length > 0 ? (
-                    <Carousel autoplay effect="fade">
+                    <Carousel arrows
+                        pauseOnFocus
+                        lazyLoad
+                        autoplay
+                        dotPosition="bottom"
+                        effect="fade">
                         {heroImages.map((src, idx) => (
                             <div key={idx} style={{ height: 200 }}>
                                 <div

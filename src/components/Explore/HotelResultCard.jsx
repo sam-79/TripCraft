@@ -153,7 +153,13 @@ const HotelResultCard = ({ data, showModal, selectedTripId, userData }) => {
                                     overflow: "hidden",
                                 }}
                             >
-                                <Carousel arrows autoplay dotPosition="bottom" effect="fade" >
+                                <Carousel
+                                    arrows
+                                    pauseOnFocus
+                                    lazyLoad
+                                    autoplay
+                                    dotPosition="bottom"
+                                    effect="fade" >
                                     {images.map((img, i) => (
                                         <div key={i}>
                                             <img

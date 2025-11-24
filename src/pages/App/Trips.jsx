@@ -384,9 +384,6 @@ const TripCard = ({ trip, index }) => {
 
   const [triggerGetItinerary] = useLazyGetItineraryQuery();
 
-  const handleMouseEnter = () => carouselRef.current?.pause();
-  const handleMouseLeave = () => carouselRef.current?.play();
-
   const handleDownload = async (e, tripId, tripName) => {
     e.stopPropagation();
     setIsDownloading(true);
@@ -443,8 +440,6 @@ const TripCard = ({ trip, index }) => {
           transition: { delay: i * 0.1, duration: 0.4 },
         }),
       }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       <Card
         hoverable
@@ -453,8 +448,10 @@ const TripCard = ({ trip, index }) => {
           trip.destination_image_url &&
             trip.destination_image_url.length > 0 ? (
             <Carousel
-              arrows
               ref={carouselRef}
+              arrows
+              pauseOnFocus
+              lazyLoad
               autoplay
               dotPosition="bottom"
               effect="fade"
@@ -506,7 +503,7 @@ const TripCard = ({ trip, index }) => {
               onClick={() => navigate(`/user/trips/${trip.trip_id}`)}
               style={{ color: "#555" }}
             >
-              View Details 
+              View Details
             </Button>
           </Tooltip>,
         ]}

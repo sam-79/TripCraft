@@ -77,7 +77,13 @@ const HotelCard = ({ hotel, onMapOpen, onAddToBooking, bookingList }) => {
         }}
         cover={
           hotel.images && hotel.images.length > 0 ? (
-            <Carousel arrows autoplay dotPosition="bottom" effect="fade">
+            <Carousel
+              arrows
+              pauseOnFocus
+              lazyLoad
+              autoplay
+              dotPosition="bottom"
+              effect="fade">
               {hotel.images.slice(0, 5).map((img, index) => (
                 <div key={index}>
                   <img
