@@ -88,6 +88,12 @@ export const tripApi = createApi({
             // No tags needed as this is a one-off lazy query for downloading
             // and we don't need it to auto-refetch or cache aggressively.
         }),
+        getWeatherSyncItinerary: builder.mutation({
+            query: (tripId) => ({
+                url: `/trips/sync_weather/${tripId}?force_refresh=false`,
+                method: "GET"
+            })
+        })
     }),
 });
 
@@ -101,6 +107,7 @@ export const {
     useDeleteTripMutation,
     useGenerateTravelModeMutation,
     useGetWeatherConditionsQuery,
-    useLazyGetItineraryQuery
+    useLazyGetItineraryQuery,
+    useGetWeatherSyncItineraryMutation
 } = tripApi;
 

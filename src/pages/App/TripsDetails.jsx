@@ -4,7 +4,7 @@ import { Card, Typography, Spin, Alert, Button, Row, Col, Segmented, List, Avata
 import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import dayjs from "dayjs";
-import { useGetTripByIdQuery, useDeleteTripPlaceMutation, useGenerateItineraryMutation, useGetWeatherConditionsQuery } from '../../api/tripApi';
+import { useGetTripByIdQuery, useDeleteTripPlaceMutation, useGenerateItineraryMutation, useGetWeatherConditionsQuery, useGetWeatherSyncItineraryMutation } from '../../api/tripApi';
 // import { useGetBookingSuggestionsQuery } from '../../api/bookingApi';
 import { startCase, toLower } from 'lodash';
 // Import the child components
@@ -41,6 +41,7 @@ const TripsDetails = () => {
     const [deleteTripPlace, { isLoading: isDeletingPlace }] = useDeleteTripPlaceMutation();
     const [generateItinerary, { data: generateItineraryResp, isLoading: isGeneratingItinerary }] = useGenerateItineraryMutation();
     // const [generatetravelMode, { isLoading: isTravelModeLoading }] = useGenerateTravelModeMutation();
+    const [getWeatherSyncItinerary, {data:weatherSyncItineraryResp, isLoading: weatherSyncItineraryLoading}] = useGetWeatherSyncItineraryMutation();
 
 
     // // When the itinerary is ready, automatically switch to that view
@@ -65,13 +66,27 @@ const TripsDetails = () => {
 
     const handleGenerateItinerary = async () => {
         try {
-            const resp = await generateItinerary(tripId).unwrap(); // <-- use this
+            const resp = await generateItinerary(tripId).unwrap(); 
             resp.status
                 ? messageApi.loading({ content: resp.message, key: "itinerary" })
                 : messageApi.error(resp.message);
         } catch (err) {
             messageApi.error({
                 content: "Failed to start itinerary generation.",
+                key: "itinerary",
+            });
+        }
+    };
+
+    const handleWeatherSyncItinerary = async () => {
+        try {
+            const resp = await getWeatherSyncItinerary(tripId).unwrap(); 
+            resp.status
+                ? messageApi.loading({ content: resp.message, key: "itinerary" })
+                : messageApi.error(resp.message);
+        } catch (err) {
+            messageApi.error({
+                content: "Failed to start itinerary updation.",
                 key: "itinerary",
             });
         }
@@ -251,8 +266,8 @@ const TripsDetails = () => {
                                                         type="primary"
                                                         block
                                                         style={{ marginTop: 16 }}
-                                                        // onClick={handleGenerateItinerary}
-                                                        // loading={isGeneratingItinerary}
+                                                        onClick={handleWeatherSyncItinerary}
+                                                        loading={weatherSyncItineraryLoading}
                                                         disabled={isHistoricalTrip || !itineraryReady}
                                                     >
                                                         Sync Iternerary based on Weather Conditions
@@ -280,8 +295,9 @@ const TripsDetails = () => {
                                                 paddingRight: 8 // optional scrollbar spacing
                                             }}>
                                                 <TripItineraryView
-                                                    itinerary={trip.itineraries}
+                                                    itinerary={trip?.itineraries}
                                                     onPlaceClick={setHighlightedPlaceId}
+                                                    weatherSyncItinerary={weatherSyncItineraryResp}
                                                 />
                                             </div>
                                             <Tooltip

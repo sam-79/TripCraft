@@ -154,7 +154,7 @@ const HotelCard = ({ hotel, onMapOpen, onAddToBooking, bookingList }) => {
           {hotel.name}
         </Title>
         <Paragraph type="secondary" ellipsis={{ rows: 1 }}>
-          <EnvironmentOutlined /> {hotel.address}
+          <EnvironmentOutlined /> {hotel?.address?.split('>').filter(Boolean).join(', ') || "Location unavailable"}
         </Paragraph>
 
         <div style={{ marginBottom: 8 }}>
