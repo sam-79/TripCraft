@@ -3,6 +3,7 @@ import { Row, Col, Card, Typography, Tag, Skeleton, Empty } from "antd";
 import { EnvironmentOutlined, StarFilled } from "@ant-design/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../theme/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
@@ -10,53 +11,51 @@ const { Title, Text } = Typography;
 async function fetchNearbyPlaces(lat, lng) {
     // TODO: Replace with Google Places API / TripAdvisor
     await new Promise((r) => setTimeout(r, 800));
-    return  [
-  {
-    name: "Shaniwar Wada",
-    city: "Pune",
-    rating: 4.4,
-    image: "https://www.incredibleindia.gov.in/en/maharashtra/pune/shaniwar-wada",
-  },
-  {
-    name: "Sinhagad Fort",
-    city: "Pune",
-    rating: 4.6,
-    image: "https://commons.wikimedia.org/wiki/File:Sinhagad_Fort_-_Pune_-_Maharashtra_-_004.jpg",
-  },
-  {
-    name: "Bhaja Caves",
-    city: "Pune (near the expressway)",
-    rating: 4.3,
-    image: "https://en.wikipedia.org/wiki/Bhaja_Caves",
-  },
-  {
-    name: "Tikona Fort",
-    city: "Maval (near Pune)",
-    rating: 4.2,
-    image: "https://en.wikipedia.org/wiki/Tikona",
-  },
-  {
-    name: "Madhe Ghat Waterfall",
-    city: "Near Pune",
-    rating: 4.1,
-    image: "https://en.wikipedia.org/wiki/Madhe_Ghat",
-  },
-  {
-    name: "Taljai Hills",
-    city: "Pune",
-    rating: 4.0,
-    image: "https://en.wikipedia.org/wiki/Taljai_Hills",
-  }
-];
+    return [
+        {
+            name: "Shaniwar Wada",
+            city: "Pune",
+            rating: 4.4,
+            image: "https://www.incredibleindia.gov.in/en/maharashtra/pune/shaniwar-wada",
+        },
+        {
+            name: "Sinhagad Fort",
+            city: "Pune",
+            rating: 4.6,
+            image: "https://commons.wikimedia.org/wiki/File:Sinhagad_Fort_-_Pune_-_Maharashtra_-_004.jpg",
+        },
+        {
+            name: "Bhaja Caves",
+            city: "Pune (near the expressway)",
+            rating: 4.3,
+            image: "https://en.wikipedia.org/wiki/Bhaja_Caves",
+        },
+        {
+            name: "Tikona Fort",
+            city: "Maval (near Pune)",
+            rating: 4.2,
+            image: "https://en.wikipedia.org/wiki/Tikona",
+        },
+        {
+            name: "Madhe Ghat Waterfall",
+            city: "Near Pune",
+            rating: 4.1,
+            image: "https://en.wikipedia.org/wiki/Madhe_Ghat",
+        },
+        {
+            name: "Taljai Hills",
+            city: "Pune",
+            rating: 4.0,
+            image: "https://en.wikipedia.org/wiki/Taljai_Hills",
+        }
+    ];
 
 }
 
 const Dashboard = () => {
-    const { theme } = useContext(ThemeContext);
     const [loading, setLoading] = useState(true);
     const [places, setPlaces] = useState([]);
-
-    const isLight = theme === "light";
+    const { t } = useTranslation();
 
     useEffect(() => {
         const getNearby = async () => {
@@ -71,7 +70,7 @@ const Dashboard = () => {
                     },
                     async () => {
                         // fallback (random coords or IP based later)
-                        const data = await fetchNearbyPlaces(19.076, 72.8777); 
+                        const data = await fetchNearbyPlaces(19.076, 72.8777);
                         setPlaces(data);
                         setLoading(false);
                     }
@@ -103,17 +102,17 @@ const Dashboard = () => {
                 style={{
                     borderRadius: 18,
                     padding: 24,
-                    background: isLight
-                        ? "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)"
-                        : "linear-gradient(135deg, #434343 0%, #000000 100%)",
+                    // background: isLight
+                    //     ? "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)"
+                    //     : "linear-gradient(135deg, #434343 0%, #000000 100%)",
                     boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
                 }}
             >
                 <Title level={3} style={{ margin: 0 }}>
-                    Hey Traveler 👋
+                    {t('hey_traveler')} 👋
                 </Title>
                 <Text type="secondary">
-                    Here are some famous spots near you 🌍
+                    {t('famous_spots')} 🌍
                 </Text>
             </motion.div>
 

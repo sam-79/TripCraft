@@ -39,27 +39,29 @@ import dayjs from 'dayjs';
 import { useSearchHotelsMutation } from '../../api/searchApi.js';
 
 import HotelResultCard from './HotelResultCard.jsx';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
 
 // --- Search Form ---
 const HotelSearchForm = ({ onSearch, searchParams, setSearchParams }) => {
+    const { t } = useTranslation();
     const { destination, dateRange, guests } = searchParams;
 
     return (
         <Row gutter={16} align="bottom">
             <Col flex={1}>
-                <Text>Destination</Text>
+                <Text>{t('destination_label')}</Text>
                 <Input
                     value={destination}
                     onChange={(e) => setSearchParams(prev => ({ ...prev, destination: e.target.value }))}
                     size="large"
-                    placeholder="Enter city or hotel name"
+                    placeholder={t('city_hotel_name')}
                 />
             </Col>
             <Col>
-                <Text>Check-in / Check-out</Text>
+                <Text>{t('checkin')} / {t('checkout')}</Text>
                 <RangePicker
                     value={dateRange}
                     onChange={(dates) => setSearchParams(prev => ({ ...prev, dateRange: dates }))}
@@ -70,7 +72,7 @@ const HotelSearchForm = ({ onSearch, searchParams, setSearchParams }) => {
                 />
             </Col>
             <Col>
-                <Text>Guests</Text>
+                <Text>{t('guests')}</Text>
                 <InputNumber
                     value={guests}
                     onChange={(value) => setSearchParams(prev => ({ ...prev, guests: value }))}
@@ -84,7 +86,7 @@ const HotelSearchForm = ({ onSearch, searchParams, setSearchParams }) => {
             {/* Rooms might be needed later, add InputNumber if required */}
             <Col>
                 <Button type="primary" icon={<SearchOutlined />} size="large" style={{ marginTop: '24px' }} onClick={onSearch}>
-                    Search Hotels
+                    {t('search')} {t('hotels')}
                 </Button>
             </Col>
         </Row>
@@ -93,6 +95,8 @@ const HotelSearchForm = ({ onSearch, searchParams, setSearchParams }) => {
 
 // --- Amenity Helper ---
 const HotelAmenityIcon = ({ name }) => {
+    const { t } = useTranslation();
+
     const iconStyle = { color: '#595959', marginRight: 4, fontSize: 14 };
     const textStyle = { color: '#595959', fontSize: 12 };
 
@@ -102,19 +106,19 @@ const HotelAmenityIcon = ({ name }) => {
 
     if (lowerName.includes('wi-fi')) {
         icon = <WifiOutlined style={iconStyle} />;
-        text = 'Free WiFi';
+        text = t('free_wifi');
     } else if (lowerName.includes('restaurant')) {
         icon = <RestOutlined style={iconStyle} />;
-        text = 'Restaurant';
+        text = t('restaurant');
     } else if (lowerName.includes('bar')) {
         icon = <CoffeeOutlined style={iconStyle} />;
-        text = 'Bar';
+        text = t('bar');
     } else if (lowerName.includes('room service')) {
         icon = <span className="material-symbols-outlined" style={iconStyle}>room_service</span>;
-        text = 'Room Service';
+        text = t('room_service');
     } else if (lowerName.includes('gym')) {
         icon = <span className="material-symbols-outlined" style={iconStyle}>fitness_center</span>;
-        text = 'Gym';
+        text = t('gym');
     } else {
         return null; // Show only common ones
     }
@@ -132,6 +136,8 @@ const HotelAmenityIcon = ({ name }) => {
 
 // --- Main HotelBooking Component ---
 const HotelBooking = ({ selectedTripId, showModal }) => {
+    const { t } = useTranslation();
+
     // --- State for Search ---
     const [searchParams, setSearchParams] = useState({
         destination: '',
@@ -150,12 +156,17 @@ const HotelBooking = ({ selectedTripId, showModal }) => {
     const handleSearch = () => {
         const { destination, dateRange, guests, rooms } = searchParams;
 
-        if (!destination) {
-            message.error('Please enter a destination.');
-            return;
-        }
-        if (!dateRange || dateRange.length !== 2) {
-            message.error('Please select check-in and check-out dates.');
+        // if (!destination) {
+        //     message.error('Please enter a destination.');
+        //     return;
+        // }
+        // if (!dateRange || dateRange.length !== 2) {
+        //     message.error('Please select check-in and check-out dates.');
+        //     return;
+        // }
+
+        if (!destination || !dateRange || dateRange.length !== 2) {
+            message.error(t('please_fill_all_required_fields'));
             return;
         }
 
@@ -173,23 +184,23 @@ const HotelBooking = ({ selectedTripId, showModal }) => {
     };
 
     // --- Render Results ---
-    const RenderResults = ({selectedTripId}) => {
+    const RenderResults = ({ selectedTripId }) => {
         if (isSearchLoading) {
             return (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                     <Spin size="large" />
-                    <Title level={5} style={{ marginTop: 16 }}>Searching for hotels...</Title>
+                    <Title level={5} style={{ marginTop: 16 }}>{t('searching_hotels')}...</Title>
                 </div>
             );
         }
 
         if (searchError) {
-            return <Alert message="Error" description={searchError.data?.message || "Failed to fetch hotels. Please try again."} type="error" showIcon style={{ marginTop: 24 }} />;
+            return <Alert message="Error" description={searchError.data?.message || `${t('failed_fetch')} ${t('hotels')}. ${t('try_again')}.`} type="error" showIcon style={{ marginTop: 24 }} />;
         }
 
         // API returns data directly as an array
         if (!hotelResults || !hotelResults.data) {
-            return <Empty description="Please search for hotels to see results." style={{ marginTop: 40 }} />;
+            return <Empty description={t('please_search_hotels_results')} style={{ marginTop: 40 }} />;
         }
 
         const hotels = hotelResults.data;
@@ -209,14 +220,14 @@ const HotelBooking = ({ selectedTripId, showModal }) => {
                 <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
                     <Col>
                         <Text strong>
-                            Showing {hotels.length} hotels in {searchedDest}
+                            {t('showing')} {hotels.length} {t('hotels')} in {searchedDest}
                             {displayCheckIn && displayCheckOut && ` from ${displayCheckIn} to ${displayCheckOut}`}
                         </Text>
                     </Col>
                     <Col>
                         <Space>
-                            <Button icon={<FilterOutlined />}>Filter</Button>
-                            <Button icon={<SortAscendingOutlined />}>Sort</Button>
+                            <Button icon={<FilterOutlined />}>{t('filter')}</Button>
+                            <Button icon={<SortAscendingOutlined />}>{t('sort')}</Button>
                         </Space>
                     </Col>
                 </Row>

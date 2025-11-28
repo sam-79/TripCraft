@@ -11,10 +11,12 @@ import SetHotelPrefs from '../../components/TripBooking/SetHotelPrefs';
 import ViewHotelRecs from '../../components/TripBooking/ViewHotelRecs';
 import CostBreakdown from '../../components/TripBooking/CostBreakdown';
 import FinalBookingStep from '../../components/TripBooking/FinalBookingStep';
+import { useTranslation } from 'react-i18next';
 
 const { Step } = Steps;
 
 const TripBooking = () => {
+    const { t } = useTranslation();
     const { tripId } = useParams();
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(0);
@@ -52,11 +54,11 @@ const TripBooking = () => {
         if (existingIndex > -1) {
             // Item exists, so remove it
             setBookingList(currentList => currentList.filter(i => i.id !== item.id));
-            messageApi.warning(`${item.name || item.operator} removed from booking list.`);
+            messageApi.warning(`${item.name || item.operator} ${t('removed_from_booking_list')}.`);
         } else {
             // Item does not exist, so add it
             setBookingList(currentList => [...currentList, item]);
-            messageApi.success(`${item.name || item.operator} added to booking list!`);
+            messageApi.success(`${item.name || item.operator} ${t('removed_from_booking_list')}`);
         }
     };
 
@@ -80,7 +82,7 @@ const TripBooking = () => {
                     )}
                 />
             ) : (
-                <p>Your booking list is empty.</p>
+                <p>{t('empty_booking_list')}.</p>
             )}
         </div>
     );
@@ -88,30 +90,30 @@ const TripBooking = () => {
 
     const steps = [
         {
-            title: 'Select Travel',
+            title: t('select_route'),
             content: <SelectTravelOptions tripId={tripId} onComplete={(data) => { updateBookingData(data); next(); }} setStatus={setStepStatus} />,
             // 'onComplete' prop receives data and calls next()
         },
         {
-            title: 'Analyze',
+            title: t('analyze'),
             // --- 3. PASS PROPS TO CHILD COMPONENT ---
             content: <AnalyzeTravel tripId={tripId} onComplete={next} setStatus={setStepStatus} bookingList={bookingList} onAddToBooking={handleAddToBookingList} />,
         },
         {
-            title: 'Hotel Prefs',
+            title: t('hotels_preferences'),
             content: <SetHotelPrefs tripId={tripId} onComplete={(data) => { updateBookingData(data); next(); }} setStatus={setStepStatus} />,
         },
         {
-            title: 'Hotels Recs',
+            title: t('hotels_recommendations'),
             // --- 3. PASS PROPS TO CHILD COMPONENT ---
             content: <ViewHotelRecs tripId={tripId} onComplete={next} setStatus={setStepStatus} bookingList={bookingList} onAddToBooking={handleAddToBookingList} />,
         },
         {
-            title: 'Cost Summary',
+            title: t('cost_summary'),
             content: <CostBreakdown tripId={tripId} onComplete={next} setStatus={setStepStatus} />,
         },
         {
-            title: 'Finalize',
+            title: t('finalize'),
             // --- 4. PASS FINAL LIST TO THE LAST STEP ---
             content: <FinalBookingStep tripId={tripId} bookingData={bookingData} bookingList={bookingList} setStatus={setStepStatus} />,
         },
@@ -126,7 +128,7 @@ const TripBooking = () => {
                     onClick={() => navigate(`/user/trips/${tripId}`)} // Navigate back to details
                     style={{ marginBottom: 24 }}
                 >
-                    Back to Trip Details
+                    {t('back_to_trip_details')}
                 </Button>
                 {/* --- 5. FLOATING POPOVER TO VIEW THE LIST --- */}
                 <Popover
@@ -136,7 +138,7 @@ const TripBooking = () => {
                     placement="bottomRight"
                 >
                     <Button type="primary" icon={<ShoppingCartOutlined />}>
-                        View List ({bookingList.length})
+                        {t('view_list')} ({bookingList.length})
                     </Button>
                 </Popover>
             </div>
@@ -148,18 +150,18 @@ const TripBooking = () => {
                     ))}
                 </Steps>
                 <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-                    <Button onClick={prev} disabled={(currentStep === 0) }>
-                        Previous
+                    <Button onClick={prev} disabled={(currentStep === 0)}>
+                        {t('previous')}
                     </Button>
                     <Button onClick={next} disabled={(currentStep === (steps.length - 1)) || (stepStatus == "process")}>
-                        Next
+                        {t('Next')}
                     </Button>
                     {/* "Next" button might be conditionally rendered or handled within child components */}
                     {/* Example: Child component calls 'onComplete' which calls 'next' */}
                 </div>
                 <div style={{ padding: '24px 0', minHeight: '400px' }}>
                     {/* Render the content of the current step */}
-                    {steps[currentStep] ? steps[currentStep].content : <Result status="404" title="Step not found" />}
+                    {steps[currentStep] ? steps[currentStep].content : <Result status="404" title={t('not_found')} />}
                 </div>
             </Card>
         </motion.div>

@@ -125,14 +125,14 @@ const CostBreakdown = ({ tripId, onComplete, setStatus }) => {
             <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
                 <Col xs={24} sm={8}>
                     <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
-                        <Card bordered={false} style={{ background: '#e6f7ff', borderRadius: '8px', textAlign: 'center' }}>
+                        <Card bordered={false} style={{ borderRadius: '8px', textAlign: 'center' }}>
                             <Statistic title="Your Budget" value={formatCurrency(total_budget)} prefix={<DollarCircleOutlined />} />
                         </Card>
                     </motion.div>
                 </Col>
                 <Col xs={24} sm={8}>
                     <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }}>
-                        <Card bordered={false} style={{ background: '#fffbe6', borderRadius: '8px', textAlign: 'center' }}>
+                        <Card bordered={false} style={{ borderRadius: '8px', textAlign: 'center' }}>
                             <Statistic title="Total Estimated Cost" value={formatCurrency(total_expenses)} prefix={<DollarCircleOutlined />} />
                         </Card>
                     </motion.div>

@@ -84,7 +84,7 @@ const LocalityCard = ({ locality, onSelect, isSelected }) => {
           style={{
             borderRadius: 16,
             border: isSelected ? "2px solid #1890ff" : "1px solid #eee",
-            background: isSelected ? "#f0f9ff" : "#fff",
+            // background: isSelected ? "#f0f9ff" : "#fff",
             boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
             overflow: "hidden",
             cursor: "pointer",

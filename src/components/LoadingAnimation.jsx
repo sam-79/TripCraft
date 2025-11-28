@@ -2,7 +2,7 @@ import React from 'react';
 import Lottie from 'lottie-react';
 import { useTranslation } from 'react-i18next';
 import "../styles/AnimationOverlay.css"
-import LoadingAnimation from "/public/animations/loading.json"
+import LoadingAnimation from "../assets/animations/loading.json"
 
 const LoadingAnimationOverlay = ({ text }) => {
     const { t } = useTranslation();

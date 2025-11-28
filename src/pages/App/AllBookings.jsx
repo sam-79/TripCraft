@@ -35,7 +35,7 @@ const formatDate = (dateStr) => dateStr ? dayjs(dateStr).format('ddd, DD MMM YYY
 
 const getBookingIcon = (type) => {
     switch (type?.toLowerCase()) {
-        case 'flight': return <span className="material-symbols-outlined" style={{ color: '#1890ff' }}>flight</span>;
+        case 'flight': return <span className="material-symbols-outlined" style={{ color: '#1890ff' }}>flight</span>; //Do not add this in language translation function
         case 'hotel': return <span className="material-symbols-outlined" style={{ color: '#52c41a' }}>hotel</span>;
         case 'train': return <span className="material-symbols-outlined" style={{ color: '#faad14' }}>train</span>;
         case 'bus': return <span className="material-symbols-outlined" style={{ color: '#eb2f96' }}>directions_bus</span>;

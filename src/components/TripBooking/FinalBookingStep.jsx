@@ -297,7 +297,7 @@ const FinalBookingStep = ({ tripId, bookingData, bookingList, setStatus }) => {
             <Divider />
 
             {/* Total Cost and Final Action */}
-            <Card style={{ marginTop: 24, background: '#f6ffed' }}>
+            <Card style={{ marginTop: 24}}>
                 <Row justify="space-between" align="middle">
                     <Col>
                         <Statistic

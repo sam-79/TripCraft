@@ -55,10 +55,10 @@ const formatDate = (dateString) =>
 const MotionCard = motion.create(Card);
 
 const StatCard = ({ icon, label, value, color }) => (
-    <Card
+    <MotionCard
         bordered={false}
         bodyStyle={{ padding: 12, display: "flex", alignItems: "center", gap: 12 }}
-        style={{ background: "#f8f9fa", borderRadius: 12, height: "100%" }}
+        style={{ borderRadius: 12, height: "100%" }}
     >
         <div
             style={{
@@ -83,7 +83,7 @@ const StatCard = ({ icon, label, value, color }) => (
                 {value}
             </div>
         </div>
-    </Card>
+    </MotionCard>
 );
 
 const TripInfoDisplay = ({ trip }) => {
@@ -91,7 +91,7 @@ const TripInfoDisplay = ({ trip }) => {
     const [form] = Form.useForm();
     const [updateTrip, { isLoading: isUpdating }] = useUpdateTripMutation();
     const { t } = useTranslation();
-    const { data: enums} = useGetEnumsQuery();
+    const { data: enums } = useGetEnumsQuery();
     const allenums = enums?.data || all_enums
 
 
@@ -140,7 +140,7 @@ const TripInfoDisplay = ({ trip }) => {
                 animate={{ opacity: 1, y: 0 }}
                 style={{
                     padding: 16,
-                    background: "#fff",
+                    // background: "#fff",
                     borderRadius: 16,
                     border: "1px solid #eee",
                 }}
@@ -163,7 +163,7 @@ const TripInfoDisplay = ({ trip }) => {
                     />
                 </div>
 
-                <Title level={5}>Edit Trip Details</Title>
+                <Title level={5}>{t('edit_trip_details')}</Title>
                 <Form form={form} layout="vertical" onFinish={handleSave}>
                     <Form.Item
                         name="dates"
@@ -319,7 +319,7 @@ const TripInfoDisplay = ({ trip }) => {
                         color="gold"
                         style={{ border: "none", color: "#333", fontWeight: 600 }}
                     >
-                        {trip.trip_name || "Upcoming Trip"}
+                        {trip.trip_name || `${t('upcoming')} ${'trip'}`}
                     </Tag>
                     <Title level={3} style={{ color: "white", margin: "4px 0 0" }}>
                         {trip.destination_full_name || trip.destination}
@@ -407,7 +407,7 @@ const TripInfoDisplay = ({ trip }) => {
                                 fontSize: 13,
                                 margin: 0,
                                 border: "none",
-                                background: "#f0f5ff",
+                                // background: "#f0f5ff",
                                 color: "#1d39c4",
                             }}
                         >
@@ -436,14 +436,14 @@ const TripInfoDisplay = ({ trip }) => {
                                 fontSize: 12,
                             }}
                         >
-                            Trip Highlights
+                            {t('trip')} {t('highlights')}
                         </Text>
 
                         <Row gutter={[12, 12]}>
                             {/* Itinerary Summary */}
                             {itineraryCount > 0 && (
                                 <Col span={12}>
-                                    <Card
+                                    <MotionCard
                                         size="small"
                                         style={{
                                             borderRadius: 12,
@@ -463,9 +463,9 @@ const TripInfoDisplay = ({ trip }) => {
                                             prefix={<ReadOutlined style={{ marginRight: 4 }} />}
                                         />
                                         <Text type="secondary" style={{ fontSize: 11 }}>
-                                            Fully Planned
+                                            {t('fully_planned')}
                                         </Text>
-                                    </Card>
+                                    </MotionCard>
                                 </Col>
                             )}
 
@@ -492,7 +492,7 @@ const TripInfoDisplay = ({ trip }) => {
                                             prefix={<CameraOutlined style={{ marginRight: 4 }} />}
                                         />
                                         <Text type="secondary" style={{ fontSize: 11 }}>
-                                            To Visit
+                                            {t('to_visit')}
                                         </Text>
                                     </Card>
                                 </Col>
@@ -504,7 +504,7 @@ const TripInfoDisplay = ({ trip }) => {
                             <div
                                 style={{
                                     marginTop: 16,
-                                    background: "#fafafa",
+                                    // background: "#fafafa",
                                     padding: 12,
                                     borderRadius: 8,
                                 }}
@@ -530,7 +530,7 @@ const TripInfoDisplay = ({ trip }) => {
                         style={{ fontSize: 24, marginBottom: 8, color: "#d9d9d9" }}
                     />
                     <p style={{ fontSize: 12, color: "#999" }}>
-                        Detailed itinerary generating...
+                        {t('detailed_itinerary_generating')}...
                     </p>
                 </div>
             )}

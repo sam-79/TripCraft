@@ -72,7 +72,7 @@ const FlightAnalysisSection = ({ analysis, bookingUrl, bookingList, onAddToBooki
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
             {/* --- Summary Statistics --- */}
-            <Row gutter={[16, 16]} style={{ marginBottom: 24, background: '#f0f2f5', padding: '16px', borderRadius: '8px' }}>
+            <Row gutter={[16, 16]} style={{ marginBottom: 24, padding: '16px', borderRadius: '8px' }}>
                 <Col xs={12} sm={6}>
                     <Statistic title="Total Flights Found" value={overallStats?.total_flights_found || 'N/A'} />
                 </Col>

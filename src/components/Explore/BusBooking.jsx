@@ -261,7 +261,7 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
             if (data.cpMsg && data.cpMsg.toLowerCase().includes('super deal')) {
                 return <Tag color="red">SUPERDEAL</Tag>;
             }
-            return <Tag color="green">Save ₹{data.Discount.toFixed(0)}</Tag>;
+            return <Tag color="green">{t('save')} ₹{data.Discount.toFixed(0)}</Tag>;
         }
         return null;
     };
@@ -364,12 +364,12 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
                 {bookingData ? (
                     <>
                         {console.log(data)}
-                        <Paragraph><strong>From : {userData?.from_city}</strong></Paragraph>
-                        <Paragraph><strong>To : {userData?.to_city}</strong></Paragraph>
-                        <Paragraph><strong>Journey Data : {bookingData?.journey_date}</strong></Paragraph>
-                        <Paragraph><strong>Travels : {data?.Travels}</strong></Paragraph>
-                        <Paragraph><strong>Bus type : {data?.bus_type}</strong></Paragraph>
-                        <Paragraph><strong>Amount : {data?.amount}</strong></Paragraph>
+                        <Paragraph><strong>{t('from')} : {userData?.from_city}</strong></Paragraph>
+                        <Paragraph><strong>{t('to')} : {userData?.to_city}</strong></Paragraph>
+                        <Paragraph><strong>{t('journey')} {t('date')} : {bookingData?.journey_date}</strong></Paragraph>
+                        <Paragraph><strong>{t('travels')} : {data?.Travels}</strong></Paragraph>
+                        <Paragraph><strong>{t('bus')} {t('type')} : {data?.bus_type}</strong></Paragraph>
+                        <Paragraph><strong>{t('amount')} : {data?.amount}</strong></Paragraph>
                     </>
                 ) : (
                     <Paragraph>{t('loading')}</Paragraph>
@@ -382,6 +382,7 @@ const BusResultCard = ({ data, showModal, selectedTripId, userData }) => {
 
 // --- Main BusBooking Component (Updated with API logic) ---
 const BusBooking = ({ showModal, selectedTripId }) => {
+    const { t } = useTranslation();
     // --- State for Search ---
     const [searchParams, setSearchParams] = useState({
         fromCity: { id: '', name: '' },
@@ -431,16 +432,20 @@ const BusBooking = ({ showModal, selectedTripId }) => {
     const handleSearch = () => {
         const { fromCity, toCity, travelDate } = searchParams;
 
-        if (!fromCity.id) {
-            message.error('Please select a "From" city from the suggestions.');
-            return;
-        }
-        if (!toCity.id) {
-            message.error('Please select a "To" city from the suggestions.');
-            return;
-        }
-        if (!travelDate) {
-            message.error('Please select a travel date.');
+        // if (!fromCity.id) {
+        //     message.error('Please select a "From" city from the suggestions.');
+        //     return;
+        // }
+        // if (!toCity.id) {
+        //     message.error('Please select a "To" city from the suggestions.');
+        //     return;
+        // }
+        // if (!travelDate) {
+        //     message.error('Please select a travel date.');
+        //     return;
+        // }
+        if (!fromCity.id || !toCity.id || !travelDate) {
+            message.error(t('please_fill_all_required_fields'));
             return;
         }
 
@@ -461,24 +466,24 @@ const BusBooking = ({ showModal, selectedTripId }) => {
             return (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                     <Spin size="large" />
-                    <Title level={5} style={{ marginTop: 16 }}>Searching for buses...</Title>
+                    <Title level={5} style={{ marginTop: 16 }}>{t('searching_buses')}...</Title>
                 </div>
             );
         }
 
         if (searchError) {
-            return <Alert message="Error" description={searchError.data?.message || "Failed to fetch buses. Please try again."} type="error" showIcon style={{ marginTop: 24 }} />;
+            return <Alert message="Error" description={searchError.data?.message || `${t('failed_fetch_buses')}. ${t('try_again')}.`} type="error" showIcon style={{ marginTop: 24 }} />;
         }
 
         if (!busResults || !busResults?.data || !busResults?.data.Response.AvailableTrips) {
-            return <Empty description="Please search for buses to see results." style={{ marginTop: 40 }} />;
+            return <Empty description={t('please_search_buses_results')} style={{ marginTop: 40 }} />;
         }
 
         const { AvailableTrips } = busResults.data.Response;
         const { from_city, to_city } = busResults.user_data;
 
         if (AvailableTrips.length === 0) {
-            return <Empty description="No buses found for this route and date." style={{ marginTop: 40 }} />;
+            return <Empty description={t('no_buses_found')} style={{ marginTop: 40 }} />;
         }
 
         return (
@@ -491,8 +496,8 @@ const BusBooking = ({ showModal, selectedTripId }) => {
                                 <Col>
                                     <Space>
                                         <SafetyCertificateOutlined style={{ color: '#52c41a' }} />
-                                        <Text strong>Ready to book?</Text>
-                                        <Text type="secondary">Complete your reservation securely on EaseMyTrip.</Text>
+                                        <Text strong>{t('ready_to_book')}</Text>
+                                        <Text type="secondary">{t('complete_reservation')}</Text>
                                     </Space>
                                 </Col>
                                 <Col>
@@ -500,9 +505,9 @@ const BusBooking = ({ showModal, selectedTripId }) => {
                                         type="primary"
                                         icon={<LinkOutlined />}
                                         onClick={() => window.open(`https://bus.easemytrip.com/home/list?org=${searchParams.fromCity.name}&des=${searchParams.toCity.name}&date=${searchParams.travelDate.format('DD-MM-YYYY')}&searchid=${searchParams.fromCity.id}_${searchParams.toCity.id}&CCode=IN&AppCode=Emt`, '_blank')}
-                                        style={{ background: '#1890ff', borderColor: '#1890ff' }}
+                                        style={{ borderColor: '#1890ff' }}
                                     >
-                                        Book on EaseMyTrip
+                                        {t('Book_EMT')}
                                     </Button>
                                 </Col>
                             </Row>
@@ -514,13 +519,13 @@ const BusBooking = ({ showModal, selectedTripId }) => {
                 <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
                     <Col>
                         <Text strong>
-                            Showing {AvailableTrips.length} buses from {from_city} to {to_city}
+                            {t('showing')} {AvailableTrips.length} buses {t('from')} {from_city} {t('to')} {to_city}
                         </Text>
                     </Col>
                     <Col>
                         <Space>
-                            <Button icon={<FilterOutlined />}>Filter</Button>
-                            <Button icon={<SortAscendingOutlined />}>Sort</Button>
+                            <Button icon={<FilterOutlined />}>{t('filter')}</Button>
+                            <Button icon={<SortAscendingOutlined />}>{t('sort')}</Button>
                         </Space>
                     </Col>
                 </Row>

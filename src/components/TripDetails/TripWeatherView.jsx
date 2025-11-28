@@ -18,6 +18,7 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -34,10 +35,11 @@ const getRoadStatusTag = (status) => {
 
 const TripWeatherView = ({ weatherData }) => {
   const { travel_update } = weatherData;
+  const { t } = useTranslation();
 
   if (!travel_update) {
     return (
-      <Alert message="No travel update data available." type="info" showIcon />
+      <Alert message={t('no_travel_update')} type="info" showIcon />
     );
   }
 
@@ -52,14 +54,14 @@ const TripWeatherView = ({ weatherData }) => {
   return (
     <div style={{ height: "100%", overflowY: "auto", paddingRight: 16 }}>
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
-        <Title level={4}>Weather & Travel Updates for {Destination}</Title>
+        <Title level={4}>{t('weather_travel_updates')} {Destination}</Title>
 
         {/* Destination Info */}
         <Descriptions column={1} size="small" bordered>
           <Descriptions.Item
             label={
               <>
-                <EnvironmentOutlined /> Destination
+                <EnvironmentOutlined /> {t('destination')}
               </>
             }
           >
@@ -68,7 +70,7 @@ const TripWeatherView = ({ weatherData }) => {
           <Descriptions.Item
             label={
               <>
-                <CalendarOutlined /> Date
+                <CalendarOutlined /> {t("date")}
               </>
             }
           >
@@ -92,7 +94,7 @@ const TripWeatherView = ({ weatherData }) => {
           title={
             <Space>
               <ThunderboltOutlined />
-              Weather Forecast
+              {t('weather')} {t('forecast')}
             </Space>
           }
           bordered={false}
@@ -108,7 +110,7 @@ const TripWeatherView = ({ weatherData }) => {
           {Weather["Next 5 Days Forecast"] && (
             <>
               <Divider style={{ margin: "8px 0" }} />
-              <Text strong>Next 5 Days Forecast:</Text>
+              <Text strong>{t('next_5_days_forecast')}:</Text>
               <Paragraph type="secondary" style={{ marginBottom: 0 }}>
                 {Weather["Next 5 Days Forecast"]}
               </Paragraph>
@@ -121,7 +123,7 @@ const TripWeatherView = ({ weatherData }) => {
           title={
             <Space>
               <CarOutlined />
-              Road Status & Blockages
+              {t('road_status')}
             </Space>
           }
           bordered={false}
@@ -145,7 +147,7 @@ const TripWeatherView = ({ weatherData }) => {
               )}
             />
           ) : (
-            <Text type="secondary">No road status updates available.</Text>
+            <Text type="secondary">{t('no_info')}.</Text>
           )}
         </Card>
 
@@ -154,7 +156,7 @@ const TripWeatherView = ({ weatherData }) => {
           title={
             <Space>
               <InfoCircleOutlined />
-              Travel Advisory
+              {t('travel_advisory')}
             </Space>
           }
           bordered={false}
@@ -170,7 +172,7 @@ const TripWeatherView = ({ weatherData }) => {
               size="small"
             />
           ) : (
-            <Text type="secondary">No travel advisories.</Text>
+            <Text type="secondary">{t('no_travel_advisories')}.</Text>
           )}
         </Card>
       </Space>

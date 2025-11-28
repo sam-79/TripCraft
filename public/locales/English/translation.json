@@ -13,7 +13,7 @@
 
   "explore_heading": "Explore Your Next Adventure ✈️",
   "explore_subheading": "Discover festivals, nature escapes, and hidden gems based on your vibe.",
-  "search_places_placeholder": "Search places...",
+  "search_places_placeholder": "Search places",
   "select_city_placeholder": "Select city",
   "best_time_placeholder": "Best time to visit",
   "any_time": "Any time",
@@ -134,6 +134,7 @@
   "save": "Save",
   "cancel": "Cancel",
   "trip_name": "Trip Name",
+  "trip":"Trip",
   
   "available": "Available",
   "no_availability_info": "No availability information",
@@ -235,7 +236,7 @@
   "openstreetmap": "OpenStreetMap",
   "satellite_view": "Satellite View",
   "date":"Date",
-
+  "search":"Search",
   "search_bus":"Search Buses",
   "trip_not_selected":"Trip not selected",
   "try_again":"Please try again.",
@@ -245,5 +246,99 @@
 
   "book_now":"Book Now",
   "close":"Close",
-  "pay_now":"Pay Now"
+  "pay_now":"Pay Now",
+
+  "journey" : "Journey",
+  "travels" : "Travels",
+  "bus":"Bus",
+  "type":"Type",
+  "amount":"Amount",
+  "please_fill_all_required_fields":"Please fill all required fields",
+  "failed_fetch_buses":"Failed to fetch buses",
+  "searching_buses":"Searching for buses",
+  "searching_hotels":"Searching for hotels",
+  "please_search_buses_results":"Please search for buses to see results",
+  "no_buses_found":"No buses found for this route and date",
+  "ready_to_book":"Ready to book?",
+  "complete_reservation":"Complete your reservation securely on EaseMyTrip.",
+
+  "Book_EMT":"Book on EaseMyTrip",
+
+  "showing":"Showing",
+  "filter":"Filter",
+  "sort":"Sort",
+
+  "search_flights":"Search Flights",
+  "city_hotel_name":"Enter city or hotel name",
+
+  "checkin":"Check-in",
+  "checkout":"Check-out",
+  "guests":"Guests",
+
+  "free_wifi":"Free WiFi",
+  "restaurant":"Restaurant",
+  "bar":"Bar",
+  "room_service":"Room Service",
+  "gym":"Gym",
+
+  "failed_fetch":"Failed to fetch",
+  "please_search_hotels_results":"Please search for hotels to see results",
+
+  "no_image":"No Image",
+  "hours":"Hours",
+  "no_booking_suggestion":"No booking suggestions are available for this trip yet",
+  "suggestion":"Suggestion",
+  "live_suggestion":"Live options",
+  "highlights":"Highlights",
+  "fully_planned":"Fully Planned",
+  "to_visit":"To Visit",
+  "detailed_itinerary_generating":"Detailed itinerary generating",
+  "weather":"Weather",
+  "weather_intelligence":"Weather Intelligence",
+  "active_weather_alerts":"Active Weather Alerts",
+  "place_restrictions:":"Place Restrictions",
+  "weather_synced":"Weather Synced",
+  "closed_due_to_weather":"Closed due to weather condition",
+  "places_removed":"Places Removed for Safety",
+  "no_travel_update":"No travel updates available",
+  "weather_travel_updates":"Weather & Travel Updates for",
+  "forecast":"Forecast",
+  "next_5_days_forecast":"Next 5 Days Forecast",
+  "road_status":"Road Status & Blockages",
+  "no_info":"No Updates/Information available",
+  "travel_advisory":"Travel Advisory",
+  "no_travel_advisories":"No travel advisories",
+
+  "confirmed":"Confirmed",
+  "bookings":"Bookings",
+  "my_bookings": "My Bookings",
+  "payments":"Payments",
+  
+  "confirm_logout":"Are you sure you want to log out?",
+
+  "hey_traveler":"Hey Traveler",
+  "famous_spots":"Here are some famous spots near you",
+  "explore_next_adventure":"Explore Your Next Adventure",
+
+  "empty_booking_list":"Your booking list is empty",
+  "removed_from_booking_list":"removed from booking list",
+  "added_to_booking_list":"added to booking list",
+  "select_route":"Select Route",
+  "analyze":"Analyze",
+  "cost_summary":"Cost Summary",
+  "finalize":"Finalize",
+  "hotels_recommendations":"Hotels Recommendations",
+  "hotels_preferences":"Hotels Preferences",
+  "back_to_trip_details":"Back to Trip Details",
+  "view_list":"View List",
+  "no_trip_planner":"No trips planned yet!",
+  "previous":"Previous",
+  "next":"Next",
+  "not_found":"Not found",
+  "delete_this_trip":"Delete this Trip",
+  "are_you_sure":"Are you Sure",
+  "delete":"Delete"
+
+  
+
 }

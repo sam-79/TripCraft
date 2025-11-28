@@ -11,38 +11,42 @@ import {
 import { SearchOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import comingSoonAnimation from '../../assets/flight-booking-coming-soon.json'; 
+import comingSoonAnimation from '../../assets/flight-booking-coming-soon.json';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 // --- Search Form ---
-const FlightSearchForm = ({ onSearch }) => (
-    <Row gutter={16}>
-        <Col flex={1}>
-            <Text>From</Text>
-            <Input placeholder="Enter origin city or airport" size="large" />
-        </Col>
-        <Col flex={1}>
-            <Text>To</Text>
-            <Input placeholder="Enter destination city or airport" size="large" />
-        </Col>
-        <Col>
-            <Text>Date</Text>
-            <DatePicker size="large" format="DD MMM YYYY" style={{ width: '100%' }} />
-        </Col>
-        <Col>
-            <Button
-                type="primary"
-                icon={<SearchOutlined />}
-                size="large"
-                style={{ marginTop: '24px' }}
-                onClick={onSearch}
-            >
-                Search Flights
-            </Button>
-        </Col>
-    </Row>
-);
+const FlightSearchForm = ({ onSearch }) => {
+    const {t} = useTranslation();
+    return (
+        <Row gutter={16}>
+            <Col flex={1}>
+                <Text>{t('from')}</Text>
+                <Input placeholder="Enter origin city or airport" size="large" />
+            </Col>
+            <Col flex={1}>
+                <Text>{t('to')}</Text>
+                <Input placeholder="Enter destination city or airport" size="large" />
+            </Col>
+            <Col>
+                <Text>{t('date')}</Text>
+                <DatePicker size="large" format="DD MMM YYYY" style={{ width: '100%' }} />
+            </Col>
+            <Col>
+                <Button
+                    type="primary"
+                    icon={<SearchOutlined />}
+                    size="large"
+                    style={{ marginTop: '24px' }}
+                    onClick={onSearch}
+                >
+                    {t('search_flights')}
+                </Button>
+            </Col>
+        </Row>
+    )
+};
 
 // --- Main FlightBooking Component ---
 const FlightBooking = () => {

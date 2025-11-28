@@ -70,7 +70,7 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ padding: '24px' }}>
-            <Divider>Trip Details</Divider>
+            <Divider>{t('trip_details')}</Divider>
             <Form form={form} layout="vertical" onFinish={onFinish}>
                 <Form.Item name="trip_name" label={t("trip_name_label")} rules={[{ required: true, message: t('trip_name_required') }]}>
                     <Input placeholder={t('trip_name_placeholder')} />
@@ -120,7 +120,7 @@ const TripForm = ({ onSubmit, defaultPreferences, isAddingTrip = { isAddingTrip 
                         </Form.Item>
                     </Col> */}
                     <Col span={12}>
-                        <Form.Item name="travelling_with" label="Travelling With" rules={[{ required: true }]}>
+                        <Form.Item name="travelling_with" label={t('travelling_with_label')} rules={[{ required: true }]}>
                             <Select placeholder={t('travelling_with_placeholder')} options={travellingWithOptions.map(o => ({ label: o, value: o }))} />
                         </Form.Item>
                     </Col>

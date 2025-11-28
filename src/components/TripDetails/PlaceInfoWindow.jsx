@@ -3,12 +3,12 @@ import { InfoWindow } from '@vis.gl/react-google-maps';
 import { Card, Typography, Space } from 'antd';
 import { EnvironmentOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
     if (!place) return null;
 
     const position = {
@@ -59,7 +59,7 @@ const PlaceInfoWindow = ({ place, index, onCloseClick }) => {
                                 id:'image-placeholder'
                             }}>
                                 <EnvironmentOutlined style={{ fontSize: 24, color: '#888' }} />
-                                <span style={{ marginTop: 4, color: '#666', fontWeight: 500 }}>No Image</span>
+                                <span style={{ marginTop: 4, color: '#666', fontWeight: 500 }}>{t('no_image')}</span>
                             </div>
 
                         </div>

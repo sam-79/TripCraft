@@ -114,7 +114,7 @@ const AnalyzeTravel = ({ tripId, onComplete, setStatus, bookingList, onAddToBook
         Detailed analysis for your journey from <Text strong>{selectedOption.legs[0]?.from}</Text> to <Text strong>{selectedOption.legs[selectedOption.legs.length - 1]?.to}</Text>.
       </Paragraph>
 
-      <Card style={{ background: '#e6f7ff', border: '1px solid #91d5ff', marginBottom: 24 }}>
+      <Card style={{border: '1px solid #91d5ff', marginBottom: 24 }}>
         <Row justify="space-between" align="middle">
           <Col>
             <Space>

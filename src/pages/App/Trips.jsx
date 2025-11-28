@@ -14,6 +14,7 @@ import {
   Carousel,
   message,
   Tooltip,
+  Popconfirm
 } from "antd";
 import {
   EnvironmentOutlined,
@@ -22,6 +23,7 @@ import {
   UserOutlined,
   ArrowRightOutlined,
   DownloadOutlined,
+  DeleteOutlined
 } from "@ant-design/icons";
 import {
   useGetAllTripsQuery,
@@ -31,7 +33,9 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import dayjs from "dayjs";
 import { startCase, toLower } from "lodash";
+import { useTranslation } from "react-i18next";
 const { Title, Text, Paragraph } = Typography;
+import { useDeleteTripMutation } from "../../api/tripApi";
 
 // --- Helper Functions for Download ---
 
@@ -69,7 +73,6 @@ const generateItineraryHtml = (data) => {
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
       line-height: 1.6;
-      background-color: #ffffff;
       color: #333;
       margin: 0;
       padding: 0;
@@ -104,7 +107,6 @@ const generateItineraryHtml = (data) => {
     p { margin-bottom: 1rem; }
     strong { color: #2d3748; }
     .header-info {
-      background-color: #edf2f7;
       border-radius: 8px;
       padding: 20px;
       margin-top: 1.5rem;
@@ -125,7 +127,6 @@ const generateItineraryHtml = (data) => {
       border-radius: 8px;
     }
     .day-card {
-      background: #fafafa;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
       padding: 20px;
@@ -133,7 +134,6 @@ const generateItineraryHtml = (data) => {
       page-break-inside: avoid; /* Try to keep each day card on one page */
     }
     .place-card {
-      background: #fff;
       border: 1px solid #e2e8f0;
       border-radius: 6px;
       padding: 15px;
@@ -165,7 +165,6 @@ const generateItineraryHtml = (data) => {
       border-bottom: none;
     }
     .travel-advisory {
-      background-color: #fffaf0;
       border: 1px solid #fbd38d;
       border-radius: 8px;
       padding: 15px;
@@ -377,12 +376,14 @@ const downloadPdfFile = (htmlContent, tripName) => {
 
 // --- TripCard Sub-Component ---
 const TripCard = ({ trip, index }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const carouselRef = useRef(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
 
   const [triggerGetItinerary] = useLazyGetItineraryQuery();
+  const [deleteTrip, { isLoading: isTripDeleting }] = useDeleteTripMutation();
 
   const handleDownload = async (e, tripId, tripName) => {
     e.stopPropagation();
@@ -426,6 +427,18 @@ const TripCard = ({ trip, index }) => {
       setIsDownloading(false);
     }
   };
+  const handleDeleteTrip = async (e, tripId, tripName) => {
+    e.stopPropagation();
+    try {
+      const response = await deleteTrip(tripId).unwrap();
+      if (response.status && response.data && response.status_code == 200) {
+        message.success(response.message);
+      }
+    } catch (error) {
+      message.error(`Failed to delete Trip ${tripName}`)
+    }
+
+  }
 
   return (
     <motion.div
@@ -481,29 +494,50 @@ const TripCard = ({ trip, index }) => {
           )
         }
         actions={[
+          <Tooltip title={t('delete_this_trip')}>
+            <Popconfirm
+              title={t(`${t('are_you_sure')}`)}
+              onConfirm={(e) => handleDeleteTrip(e, trip.trip_id, trip.trip_name)}
+              okText={t('yes')}
+              cancelText={t('no')}
+            >
+              {/* <Button type="text" danger icon={<DeleteOutlined />} loading={isDeletingPlace} /> */}
+              <Button
+                type="text"
+                icon={<DeleteOutlined style={{ color: '#ff6b6b' }} />}
+                key="delete"
+                loading={isTripDeleting}
+                // onClick={(e) => handleDelete(e, trip.trip_id, trip.trip_name)}
+                style={{ color: "#555" }}
+                iconPosition="end"
+              >
+                {t('delete')}
+              </Button>
+            </Popconfirm>
+          </Tooltip>,
           <Tooltip title="Download Itinerary as PDF">
             <Button
               type="text"
-              icon={<DownloadOutlined />}
+              icon={<DownloadOutlined style={{ color: '#4ecdc4' }} />}
               key="download"
               loading={isDownloading}
               onClick={(e) => handleDownload(e, trip.trip_id, trip.trip_name)}
               style={{ color: "#555" }}
               iconPosition="end"
             >
-              Download
+              {t('download')}
             </Button>
           </Tooltip>,
           <Tooltip title="View Trip Details">
             <Button
               type="text"
               key="details"
-              icon={<ArrowRightOutlined />}
+              icon={<ArrowRightOutlined style={{ color: '#45b7d1' }} />}
               iconPosition="end"
               onClick={() => navigate(`/user/trips/${trip.trip_id}`)}
               style={{ color: "#555" }}
             >
-              View Details
+              {t('view_details')}
             </Button>
           </Tooltip>,
         ]}
@@ -534,16 +568,18 @@ const TripCard = ({ trip, index }) => {
         </Paragraph>
 
         {/* Show download-specific error here */}
-        {downloadError && (
-          <Alert
-            message={downloadError}
-            type="error"
-            showIcon
-            style={{ marginTop: 12 }}
-            closable
-            onClose={() => setDownloadError(null)}
-          />
-        )}
+        {
+          downloadError && (
+            <Alert
+              message={downloadError}
+              type="error"
+              showIcon
+              style={{ marginTop: 12 }}
+              closable
+              onClose={() => setDownloadError(null)}
+            />
+          )
+        }
 
         <div style={{ marginTop: 16 }}>
           <Space direction="vertical" style={{ width: "100%" }}>
@@ -554,7 +590,7 @@ const TripCard = ({ trip, index }) => {
             </Text>
             <Text>
               <DollarOutlined /> ₹{trip.budget.toLocaleString("en-IN")} for{" "}
-              {trip.num_people} people ({trip.travelling_with})
+              {trip.num_people} {t('people')} ({trip.travelling_with})
             </Text>
             <Space wrap>
               {trip.activities.map((activity) => (
@@ -565,8 +601,8 @@ const TripCard = ({ trip, index }) => {
             </Space>
           </Space>
         </div>
-      </Card>
-    </motion.div>
+      </Card >
+    </motion.div >
   );
 };
 
@@ -574,6 +610,7 @@ const TripCard = ({ trip, index }) => {
 const Trips = () => {
   const { data: trips, error, isLoading } = useGetAllTripsQuery();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
@@ -600,12 +637,13 @@ const Trips = () => {
         image={Empty.PRESENTED_IMAGE_SIMPLE}
         description={
           <span>
-            No trips planned yet! <br /> Let's create your first adventure.
+            {t('no_trip_planner')} <br />
+            {/* Let's create your first adventure. */}
           </span>
         }
       >
         <Button type="primary" onClick={() => navigate("/user/newtrip")}>
-          Create New Trip
+          {t('create_first_trip')}
         </Button>
       </Empty>
     );
@@ -618,7 +656,7 @@ const Trips = () => {
         animate={{ opacity: 1, y: 0 }}
       >
         <Title level={3} style={{ marginBottom: 24 }}>
-          Your Planned Trips
+          {t('your_planned_trips')}
         </Title>
       </motion.div>
       <Row gutter={[24, 24]}>

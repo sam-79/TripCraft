@@ -131,7 +131,9 @@ const TripsDetails = () => {
                                 },
                                 {
                                     label: (
-                                        <Tooltip title={placesReady ? null : 'Finding places for you'}>
+                                        <Tooltip title={placesReady ? null : <><Spin size='small' style={{
+                                            'colorPrimary': 'white',
+                                        }} />'Finding places for you'</>}>
                                             Locations
                                         </Tooltip>
                                     ), value: 'locations', disabled: !placesReady

@@ -84,6 +84,7 @@ const DayHeader = ({ day, date, status }) => (
           weekday: "long",
           month: "short",
           day: "numeric",
+          year: "numeric",
         })}
       </Text>
     </Space>
@@ -112,7 +113,7 @@ const ChangesSummary = ({ summary }) => {
           size="small"
           bordered={false}
           style={{
-            background: "#fff1f0",
+            // background: "#fff1f0",
             textAlign: "center",
             borderRadius: 8,
           }}
@@ -130,7 +131,7 @@ const ChangesSummary = ({ summary }) => {
           size="small"
           bordered={false}
           style={{
-            background: "#fff7e6",
+            // background: "#fff7e6",
             textAlign: "center",
             borderRadius: 8,
           }}
@@ -148,7 +149,7 @@ const ChangesSummary = ({ summary }) => {
           size="small"
           bordered={false}
           style={{
-            background: "#f6ffed",
+            // background: "#f6ffed",
             textAlign: "center",
             borderRadius: 8,
           }}
@@ -166,6 +167,7 @@ const ChangesSummary = ({ summary }) => {
 };
 
 const WeatherAlertBanner = ({ weatherData }) => {
+  const { t } = useTranslation();
   if (!weatherData) return null;
 
   const { weather_intelligence } = weatherData;
@@ -194,7 +196,7 @@ const WeatherAlertBanner = ({ weatherData }) => {
             <div
               style={{
                 padding: 8,
-                background: "#fff",
+                // background: "#fff",
                 borderRadius: "50%",
                 border: "1px solid #ffccc7",
               }}
@@ -203,7 +205,7 @@ const WeatherAlertBanner = ({ weatherData }) => {
             </div>
             <div>
               <Text strong style={{ fontSize: 16 }}>
-                Weather Intelligence
+                {t('weather_intelligence')}
               </Text>
               {impactSummary && (
                 <Paragraph
@@ -234,7 +236,7 @@ const WeatherAlertBanner = ({ weatherData }) => {
               <Divider style={{ margin: "12px 0" }} />
               <div style={{ width: "100%" }}>
                 <Text strong style={{ fontSize: 12, color: "#cf1322" }}>
-                  Active Weather Alerts:
+                  {t('active_weather_alerts')}:
                 </Text>
                 {alerts.map((alert, idx) => (
                   <Alert
@@ -256,7 +258,7 @@ const WeatherAlertBanner = ({ weatherData }) => {
               style={{ width: "100%", marginTop: alerts.length > 0 ? 12 : 0 }}
             >
               <Text strong style={{ fontSize: 12, color: "#cf1322" }}>
-                Place Restrictions:
+                {t('place_restrictions')}:
               </Text>
               {placeAlerts.map((alert, idx) => (
                 <Alert
@@ -278,7 +280,7 @@ const WeatherAlertBanner = ({ weatherData }) => {
                             color: "#135200",
                           }}
                         >
-                          <strong>Suggestion:</strong>{" "}
+                          <strong>{t('suggestion')}:</strong>{" "}
                           {alert.alternative_suggestion}
                         </div>
                       )}
@@ -347,7 +349,7 @@ const TripItineraryView = ({ itinerary, weatherSyncItinerary }) => {
             position: "sticky",
             top: 0,
             zIndex: 10,
-            background: "rgba(255,255,255,0.9)",
+            // background: "rgba(255,255,255,0.9)",
             padding: "12px 0",
             backdropFilter: "blur(8px)",
           }}
@@ -362,7 +364,7 @@ const TripItineraryView = ({ itinerary, weatherSyncItinerary }) => {
               {
                 label: (
                   <Space>
-                    Weather Synced
+                    {t('weather_synced')}
                     {/* <Badge dot color="red" offset={[0, 0]}>
                       <ThunderboltOutlined />
                     </Badge> */}
@@ -439,7 +441,7 @@ const TripItineraryView = ({ itinerary, weatherSyncItinerary }) => {
                   <div
                     style={{
                       padding: "16px 24px",
-                      background: "#fafafa",
+                      // background: "#fafafa",
                       borderBottom: "1px solid #f0f0f0",
                     }}
                   >
@@ -478,7 +480,7 @@ const TripItineraryView = ({ itinerary, weatherSyncItinerary }) => {
                         style={{
                           borderRadius: 8,
                           marginBottom: 24,
-                          background: "#e6f7ff",
+                          // background: "#e6f7ff",
                           border: "1px solid #91caff",
                         }}
                       />
@@ -618,7 +620,7 @@ const TripItineraryView = ({ itinerary, weatherSyncItinerary }) => {
                                   <Text type="danger" style={{ fontSize: 12 }}>
                                     <SafetyOutlined />{" "}
                                     {place.removal_reason ||
-                                      "Closed due to weather"}
+                                      t('closed_due_to_weather')}
                                   </Text>
                                 )}
                                 {!place.removed && place.best_time_to_visit && (
@@ -629,7 +631,7 @@ const TripItineraryView = ({ itinerary, weatherSyncItinerary }) => {
                                     <ClockCircleOutlined
                                       style={{ marginRight: 4 }}
                                     />
-                                    Best time: {place.best_time_to_visit}
+                                    {t('best_time_placeholder')}: {place.best_time_to_visit}
                                   </Text>
                                 )}
                               </div>
@@ -646,7 +648,7 @@ const TripItineraryView = ({ itinerary, weatherSyncItinerary }) => {
                           style={{
                             marginTop: 16,
                             padding: 12,
-                            background: "#fff2f0",
+                            // background: "#fff2f0",
                             borderRadius: 8,
                             border: "1px dashed #ffccc7",
                           }}
@@ -656,7 +658,7 @@ const TripItineraryView = ({ itinerary, weatherSyncItinerary }) => {
                             type="danger"
                             style={{ display: "block", marginBottom: 8 }}
                           >
-                            <SafetyOutlined /> Places Removed for Safety:
+                            <SafetyOutlined /> {t('places_removed')}:
                           </Text>
                           <ul
                             style={{

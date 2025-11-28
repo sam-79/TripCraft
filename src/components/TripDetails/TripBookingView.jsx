@@ -19,7 +19,7 @@ const { Panel } = Collapse;
 
 // A more robust function to determine tag color and icon based on availability
 const getAvailabilityTag = (status) => {
-    const { t } = useTranslation();
+    // const { t } = useTranslation();
     if (!status) return null;
     const lowerStatus = status.toLowerCase();
 
@@ -70,7 +70,7 @@ const TrainCard = ({ train }) => {
         <Card className="train-card" bordered={false}>
             <div className="train-header">
                 <Title level={5} style={{ margin: 0 }}>{train.trainName} <Text type="secondary">({train.trainNumber})</Text></Title>
-                <Tag color="blue">{train.duration} hrs</Tag>
+                <Tag color="blue">{train.duration} {t('hours')}</Tag>
             </div>
             <Divider className="train-divider" />
             <div className="train-route">
@@ -103,20 +103,20 @@ const TripBookingView = ({ bookingData }) => {
     const { t } = useTranslation();
     
     if (!bookingData || !bookingData.to || bookingData.to.length === 0) {
-        return <Empty description="No booking suggestions are available for this trip yet." />;
+        return <Empty description={t('no_booking_suggestion')} />;
     }
 
     return (
         <div className="trip-booking-container">
             <div className="booking-header">
-                <Title level={4} style={{ margin: 0 }}>Booking Suggestions</Title>
-                <Text type="secondary">Live options from <Text strong>{bookingData.from}</Text></Text>
+                <Title level={4} style={{ margin: 0 }}>{t('booking')} {t('suggestion')}</Title>
+                <Text type="secondary">{t('live_suggestion')} {t('from')} <Text strong>{bookingData.from}</Text></Text>
             </div>
 
             {bookingData.to.map((leg, index) => (
                 <div key={index} className="booking-leg">
                     <div className="leg-header">
-                        <Title level={5}><EnvironmentOutlined /> To: {leg.destination}</Title>
+                        <Title level={5}><EnvironmentOutlined /> {t('to')}: {leg.destination}</Title>
                         <Tooltip title="Open booking website in a new tab">
                             <Button
                                 type="primary"
@@ -125,7 +125,7 @@ const TripBookingView = ({ bookingData }) => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                Book Now
+                                {t('book_now')}
                             </Button>
                         </Tooltip>
                     </div>

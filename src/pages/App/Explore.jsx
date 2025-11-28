@@ -27,6 +27,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../theme/ThemeContext";
 import { useGetTravelRecommendationsQuery } from "../../api/recommendationApi";
+import { useTranslation } from "react-i18next";
 // import { debounce } from "lodash";
 
 // import { fetchPlaceSuggestions } from "../../utils/utils";
@@ -35,6 +36,7 @@ const { Title, Paragraph, Text } = Typography;
 const { useBreakpoint } = Grid;
 
 const Explore = () => {
+  const { t } = useTranslation();
   const { theme } = useContext(ThemeContext);
   const screens = useBreakpoint();
 
@@ -126,7 +128,7 @@ const Explore = () => {
         style={{ borderRadius: 18, padding: screens.xs ? 16 : 24, background: heroGradient, boxShadow: "0 12px 40px rgba(0,0,0,0.12)" }}
       >
         <Title level={screens.xs ? 4 : 3} style={{ margin: 0, color: isLight ? "#1f1f1f" : "#fff" }}>
-          Explore Your Next Adventure ✈️
+          {t('explore_next_adventure')} ✈️
         </Title>
         <Text style={{ opacity: 0.9, color: isLight ? "#333" : "#fff" }}>
           Discover festivals, nature escapes, and hidden gems based on your vibe.

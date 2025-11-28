@@ -222,9 +222,9 @@ const TrainResultCard = ({ data }) => (
               color: '#8c8c8c',
             }}
           >
-            <span style={{ height: 1, background: '#d9d9d9', flex: 1 }}></span>
+            <span style={{ height: 1, flex: 1 }}></span>
             <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#8c8c8c' }}>train</span>
-            <span style={{ height: 1, background: '#d9d9d9', flex: 1 }}></span>
+            <span style={{ height: 1, flex: 1 }}></span>
           </div>
           <Text type="secondary" style={{ fontSize: 12 }}>
             {data.distance} km
@@ -243,7 +243,7 @@ const TrainResultCard = ({ data }) => (
       {/* === Class Fare & Availability Section === */}
       <Card
         size="small"
-        style={{ marginTop: 16, background: '#f9f9f9', borderRadius: 8, border: 'none' }}
+        style={{ marginTop: 16, borderRadius: 8, border: 'none' }}
         bodyStyle={{ padding: '12px 16px' }}
       >
         <Row gutter={[12, 12]}>
@@ -467,7 +467,7 @@ const TrainBooking = () => {
           ))}
         </Checkbox.Group>
 
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 16, borderTop: '1px solid #f0f0f0', textAlign: 'right', background: '#fff' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 16, borderTop: '1px solid #f0f0f0', textAlign: 'right' }}>
            <Button onClick={() => setFilters({ classes: [], timeSlots: [] })}>Reset</Button>
            <Button type="primary" style={{ marginLeft: 8 }} onClick={() => setIsFilterVisible(false)}>Done</Button>
         </div>
